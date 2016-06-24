@@ -1,26 +1,18 @@
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
-
 }
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 repositories {
-    maven {
-        name 'CB Repo'
-        url "http://chickenbones.net/maven/"
-    }
     maven {
         name "Mobius Repo"
         url "http://mobiusstrip.eu/maven"
@@ -29,9 +21,11 @@ repositories {
         name = "ic2-and-forestry"
         url = "http://maven.ic2.player.to/"
     }
+	maven {
+        name = "JEI"
+        url "http://dvs1.progwml6.com/files/maven"
+	}
 }
-
-apply plugin: 'forge'
 
 group = mod_group
 archivesBaseName = mod_archive_name
@@ -39,6 +33,7 @@ archivesBaseName = mod_archive_name
 minecraft {
     runDir = "run"
     version = "${minecraft_version}-${forge_version}"
+    mappings = "${mappings_version}"
     replaceIn mod_info_path
     replace "@MAJOR@", major_version
     replace "@MINOR@", minor_version
@@ -46,14 +41,9 @@ minecraft {
     replace "@FORGE_VERSION@", forge_version
 }
 dependencies {
-    compile "codechicken:CodeChickenLib:${minecraft_version}-${CCLIB_version}:dev"
-    compile "codechicken:CodeChickenCore:${minecraft_version}-${CCC_version}:dev"
-    compile "codechicken:NotEnoughItems:${minecraft_version}-${NEI_version}:dev"
-    compile "mcp.mobius.waila:Waila:${WAILA_version}_${minecraft_version}:dev"
-    compile "net.industrial-craft:industrialcraft-2:${IC2_version}:dev"
-    compile ("appeng:appliedenergistics2:${AE2_version}:dev"){
-        transitive = false
-    }
+    deobfCompile "mcp.mobius.waila:Waila:${WAILA_version}_1.9.4:dev"
+//  compile "net.industrial-craft:industrialcraft-2:${IC2_version}:dev"
+    deobfCompile "mezz.jei:jei_${minecraft_version}:${JEI_version}"
 }
 
 processResources {
