@@ -43,7 +43,7 @@ minecraft {
 }
 dependencies {
     deobfCompile "mcp.mobius.waila:Waila:${WAILA_version}_1.9.4:dev"
-//  deobfCompile "net.industrial-craft:industrialcraft-2:${IC2_version}:dev"
+    deobfCompile "net.industrial-craft:industrialcraft-2:${IC2_version}:dev"
     deobfCompile "mezz.jei:jei_${minecraft_version}:${JEI_version}"
 }
 
