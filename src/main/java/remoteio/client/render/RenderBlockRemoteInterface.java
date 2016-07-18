@@ -1,3 +1,4 @@
+/*
 package remoteio.client.render;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -12,9 +13,11 @@ import remoteio.common.block.core.BlockIOCore;
 import remoteio.common.lib.VisualState;
 import remoteio.common.tile.TileRemoteInterface;
 
+*/
 /**
  * @author dmillerw
- */
+ *//*
+
 public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler {
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
@@ -91,4 +94,4 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
     public int getRenderId() {
         return BlockRemoteInterface.renderID;
     }
-}
+}*/

@@ -5,16 +5,18 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 import remoteio.client.gui.button.GuiBetterButton;
 import remoteio.common.inventory.container.ContainerNull;
 import remoteio.common.lib.ModInfo;
 import remoteio.common.network.PacketHandler;
 import remoteio.common.network.packet.PacketServerApplyRFConfig;
+
+import java.io.IOException;
 
 /**
  * @author dmillerw
@@ -54,7 +56,7 @@ public class GuiRFConfig extends GuiContainer {
 
         buttonList.add(buttonDec = new GuiBetterButton(0, guiLeft + 107, guiTop + 19, 12, 12, "-"));
         buttonList.add(buttonInc = new GuiBetterButton(1, guiLeft + 121, guiTop + 19, 12, 12, "+"));
-        textFieldRate = new GuiTextField(mc.fontRenderer, 5, 20, 100, 10);
+        textFieldRate = new GuiTextField(0, mc.fontRendererObj, 5, 20, 100, 10);
         textFieldRate.setFocused(true);
         textFieldRate.setCanLoseFocus(false);
         if (itemStack.hasTagCompound()) {
@@ -74,19 +76,19 @@ public class GuiRFConfig extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float partial, int mouseX, int mouseY) {
         Minecraft.getMinecraft().renderEngine.bindTexture(GUI_BLANK);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        GL11.glColor4f(1, 1, 1, 1);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        fontRendererObj.drawString(StatCollector.translateToLocal("container.remoteio.rfconfig"), 5, 5, 4210752);
-        fontRendererObj.drawSplitString(StatCollector.translateToLocal("container.remoteio.rfconfig_desc"), 5, 35, 170, 4210752);
+        fontRendererObj.drawString(I18n.format("container.remoteio.rfconfig"), 5, 5, 4210752);
+        fontRendererObj.drawSplitString(I18n.format("container.remoteio.rfconfig_desc"), 5, 35, 170, 4210752);
         textFieldRate.drawTextBox();
     }
 
     @Override
-    protected void keyTyped(char character, int key) {
+    protected void keyTyped(char character, int key) throws IOException {
         super.keyTyped(character, key);
         if (key == Keyboard.KEY_BACK || Character.isDigit(character)) {
             textFieldRate.textboxKeyTyped(character, key);

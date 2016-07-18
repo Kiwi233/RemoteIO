@@ -2,83 +2,75 @@ package remoteio.common.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import remoteio.common.core.TabRemoteIO;
 import remoteio.common.core.handler.BlockUpdateTicker;
-import remoteio.common.lib.ModInfo;
 
-public class BlockSkylight
-extends Block {
-    private IIcon blank;
-    private IIcon[] icons;
+public class BlockSkylight extends Block {
 
     public BlockSkylight() {
-        super(Material.glass);
+        super(Material.GLASS);
         setHardness(2F);
         setResistance(2F);
         setCreativeTab(TabRemoteIO.TAB);
     }
 
     @Override
-    public void onBlockAdded(World world, int x, int y, int z) {
+    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
         if (!world.isRemote) {
-            updateState(world, x, y, z);
+            updateState(world, pos, state);
         }
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block) {
         if (!world.isRemote) {
-            updateState(world, x, y, z);
+            updateState(world, pos, state);
         }
     }
 
-    private void updateState(World world, int x, int y, int z) {
-        int meta = world.getBlockMetadata(x, y, z);
-        boolean powered = world.isBlockIndirectlyGettingPowered(x, y, z);
+    private void updateState(World world, BlockPos pos, IBlockState state) {
+        int meta = world.getBlockMetadata(pos);
+        boolean powered = world.isBlockIndirectlyGettingPowered(pos);
 
         if (powered && (meta == 0 || meta == 1)) {
-            BlockUpdateTicker.registerBlockUpdate(world, x, y, z, this, 2);
+            BlockUpdateTicker.registerBlockUpdate(world, pos, this, 2);
         } else if (!powered && meta == 2) {
-            BlockUpdateTicker.registerBlockUpdate(world, x, y, z, this, 0);
+            BlockUpdateTicker.registerBlockUpdate(world, pos, this, 0);
         }
     }
 
-    public void onBlockUpdate(World world, int x, int y, int z, Block causeBlock, int causeMeta) {
-        int meta = world.getBlockMetadata(x, y, z);
+    public void onBlockUpdate(World world, BlockPos pos, Block causeBlock, int causeMeta) {
+        int meta = world.getBlockMetadata(pos);
         boolean powered = (causeMeta == 2 || causeMeta == 1);
 
         if (powered && meta == 0) {
-            BlockUpdateTicker.registerBlockUpdate(world, x, y, z, this, 1);
+            BlockUpdateTicker.registerBlockUpdate(world, pos, this, 1);
         } else if (!powered && meta == 1) {
-            BlockUpdateTicker.registerBlockUpdate(world, x, y, z, this, 0);
+            BlockUpdateTicker.registerBlockUpdate(world, pos, this, 0);
         }
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
-        return world.getBlock(x, y, z) == this ? world.getBlockMetadata(x, y, z) == 0 : super.shouldSideBeRendered(world, x, y, z, side);
+    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return world.getBlockState(pos) == this ? world.getBlockState(pos).getBlock().getMetaFromState(state) == 0 : super.shouldSideBeRendered(state, world, pos, side);
     }
 
     @Override
-    public boolean isOpaqueCube() {
+    public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
     @Override
-    public int getLightOpacity(IBlockAccess world, int x, int y, int z) {
-        return world.getBlockMetadata(x, y, z) == 0 ? 255 : 0;
+    public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return world.getBlockState(pos).getBlock().getMetaFromState(state) == 0 ? 255 : 0;
     }
 
-    @Override
-    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-        return world.getBlockMetadata(x, y, z) == 0 ? blank : getConnectedBlockTexture(world, x, y, z, side, icons);
-    }
-
-    public boolean shouldConnectToBlock(IBlockAccess world, int x, int y, int z, Block block, int meta) {
+    /*public boolean shouldConnectToBlock(IBlockAccess world, int x, int y, int z, Block block, int meta) {
         return block == this && meta > 0;
     }
 
@@ -384,33 +376,5 @@ extends Block {
         }
 
         return icons[0];
-    }
-
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        return icons[0];
-    }
-
-    @Override
-    public void registerBlockIcons(IIconRegister register) {
-        this.blank = register.registerIcon(ModInfo.RESOURCE_PREFIX + "blank");
-        this.icons = new IIcon[16];
-        icons[0]  = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass");
-        icons[1]  = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_1_d");
-        icons[2]  = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_1_u");
-        icons[3]  = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_1_l");
-        icons[4]  = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_1_r");
-        icons[5]  = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_2_h");
-        icons[6]  = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_2_v");
-        icons[7]  = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_2_dl");
-        icons[8]  = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_2_dr");
-        icons[9]  = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_2_ul");
-        icons[10] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_2_ur");
-        icons[11] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_3_d");
-        icons[12] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_3_u");
-        icons[13] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_3_l");
-        icons[14] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_3_r");
-        icons[15] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_4");
-    }
-
+    }*/
 }

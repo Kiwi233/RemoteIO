@@ -1,10 +1,12 @@
 package remoteio.client.gui;
 
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
-import org.lwjgl.opengl.GL11;
 import remoteio.client.documentation.Documentation;
 import remoteio.client.documentation.DocumentationEntry;
 import remoteio.client.documentation.IDocumentationPage;
@@ -25,9 +27,6 @@ extends GuiScreen {
     public static final int XSIZE = 142;
     public static final int YSIZE = 180;
 
-    public static final int XPADDING = 10;
-    public static final int YPADDING = 10;
-
     private static final int SCREEN_X = 11;
     private static final int SCREEN_Y = 9;
     private static final int SCREEN_WIDTH = 122;
@@ -44,9 +43,6 @@ extends GuiScreen {
     private List<DocumentationEntry> categoryCache = null;
     private DocumentationEntry currentEntry = null;
     private IDocumentationPage currentPage = null;
-    private int currentPageIndex = 0;
-
-    private List<IDocumentationPage> entryCache;
 
     private int guiLeft;
     private int guiTop;
@@ -84,7 +80,7 @@ extends GuiScreen {
         int minY = 0;
         int maxY = 0;
         final int mousePadding = 25;
-        final int offset = mc.fontRenderer.FONT_HEIGHT / 2;
+        final int offset = mc.fontRendererObj.FONT_HEIGHT / 2;
         final int standardY = guiTop - offset;
         final int middle = SCREEN_Y + SCREEN_HEIGHT / 2;
 
@@ -105,58 +101,60 @@ extends GuiScreen {
                 }
             }
 
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            Tessellator tessellator = Tessellator.instance;
-            tessellator.startDrawingQuads();
-            tessellator.setColorOpaque_I(BACK_COLOR);
+            GlStateManager.disableTexture2D();
+            Tessellator tessellator = Tessellator.getInstance();
+            VertexBuffer vertexbuffer = tessellator.getBuffer();
+            vertexbuffer.begin(7, DefaultVertexFormats.POSITION);
+            vertexbuffer.putColor4(BACK_COLOR);
             if (selection != -1) {
-                tessellator.addVertex(guiLeft + mousePadding, maxY, 0);
-                tessellator.addVertex(guiLeft + XSIZE - mousePadding, maxY, 0);
-                tessellator.addVertex(guiLeft + XSIZE - mousePadding, minY, 0);
-                tessellator.addVertex(guiLeft + mousePadding, minY, 0);
+                vertexbuffer.pos(guiLeft + mousePadding, maxY, 0).endVertex();
+                vertexbuffer.pos(guiLeft + XSIZE - mousePadding, maxY, 0).endVertex();
+                vertexbuffer.pos(guiLeft + XSIZE - mousePadding, minY, 0).endVertex();
+                vertexbuffer.pos(guiLeft + mousePadding, minY, 0).endVertex();
             }
             tessellator.draw();
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GlStateManager.enableTexture2D();
 
-            mc.fontRenderer.drawString("BLOCK", centeredX("BLOCK"), guiTop - offset + SCREEN_Y + SCREEN_HEIGHT / 4, selection == 0 ? TEXT_HIGHLIGHT_COLOR : TEXT_COLOR);
-            mc.fontRenderer.drawString("ITEM", centeredX("ITEM"), guiTop - offset + middle, selection == 1 ? TEXT_HIGHLIGHT_COLOR : TEXT_COLOR);
-            mc.fontRenderer.drawString("OTHER", centeredX("OTHER"), guiTop - offset + middle + SCREEN_HEIGHT / 4, selection == 2 ? TEXT_HIGHLIGHT_COLOR : TEXT_COLOR);
+            mc.fontRendererObj.drawString("BLOCK", centeredX("BLOCK"), guiTop - offset + SCREEN_Y + SCREEN_HEIGHT / 4, selection == 0 ? TEXT_HIGHLIGHT_COLOR : TEXT_COLOR);
+            mc.fontRendererObj.drawString("ITEM", centeredX("ITEM"), guiTop - offset + middle, selection == 1 ? TEXT_HIGHLIGHT_COLOR : TEXT_COLOR);
+            mc.fontRendererObj.drawString("OTHER", centeredX("OTHER"), guiTop - offset + middle + SCREEN_HEIGHT / 4, selection == 2 ? TEXT_HIGHLIGHT_COLOR : TEXT_COLOR);
         } else if (currentEntry == null) {
-            mc.fontRenderer.drawString(currentCategory.name() + ":", centeredX(currentCategory.name() + ":"), guiTop + SCREEN_Y + 5, TEXT_COLOR);
+            mc.fontRendererObj.drawString(currentCategory.name() + ":", centeredX(currentCategory.name() + ":"), guiTop + SCREEN_Y + 5, TEXT_COLOR);
 
             if (categoryCache != null && !categoryCache.isEmpty()) {
-                for (int i=0; i<categoryCache.size(); i++) {
+                for (int i = 0; i < categoryCache.size(); i++) {
                     DocumentationEntry entry = categoryCache.get(i);
-                    String localizedName = StatCollector.translateToLocal(entry.getUnlocalizedName()).toUpperCase();
-                    if (mc.fontRenderer.getStringWidth(localizedName) >= SCREEN_WIDTH) {
-                        localizedName = mc.fontRenderer.trimStringToWidth(localizedName, SCREEN_WIDTH - (mc.fontRenderer.getStringWidth(".....")));
+                    String localizedName = I18n.format(entry.getUnlocalizedName()).toUpperCase();
+                    if (mc.fontRendererObj.getStringWidth(localizedName) >= SCREEN_WIDTH) {
+                        localizedName = mc.fontRendererObj.trimStringToWidth(localizedName, SCREEN_WIDTH - (mc.fontRendererObj.getStringWidth(".....")));
                         localizedName = localizedName + "...";
                     }
                     boolean selected = mouseX >= guiLeft + mousePadding && mouseX <= guiLeft + XSIZE - mousePadding && mouseY >= guiTop + SCREEN_Y + 20 + (15 * i) && mouseY <= guiTop + SCREEN_Y + 20 + (15 * i) + 10;
-                    GL11.glDisable(GL11.GL_TEXTURE_2D);
-                    Tessellator tessellator = Tessellator.instance;
-                    tessellator.startDrawingQuads();
-                    tessellator.setColorOpaque_I(BACK_COLOR);
+                    GlStateManager.disableTexture2D();
+                    Tessellator tessellator = Tessellator.getInstance();
+                    VertexBuffer vertexbuffer = tessellator.getBuffer();
+                    vertexbuffer.begin(7, DefaultVertexFormats.POSITION);
+                    vertexbuffer.putColor4(BACK_COLOR);
                     if (selected) {
-                        tessellator.addVertex(guiLeft + mousePadding, guiTop + SCREEN_Y + 20 + (15 * i) + 10, 0);
-                        tessellator.addVertex(guiLeft + XSIZE - mousePadding, guiTop + SCREEN_Y + 20 + (15 * i) + 10, 0);
-                        tessellator.addVertex(guiLeft + XSIZE - mousePadding, guiTop + SCREEN_Y + 20 + (15 * i), 0);
-                        tessellator.addVertex(guiLeft + mousePadding, guiTop + SCREEN_Y + 20 + (15 * i), 0);
+                        vertexbuffer.pos(guiLeft + mousePadding, guiTop + SCREEN_Y + 20 + (15 * i) + 10, 0).endVertex();
+                        vertexbuffer.pos(guiLeft + XSIZE - mousePadding, guiTop + SCREEN_Y + 20 + (15 * i) + 10, 0).endVertex();
+                        vertexbuffer.pos(guiLeft + XSIZE - mousePadding, guiTop + SCREEN_Y + 20 + (15 * i), 0).endVertex();
+                        vertexbuffer.pos(guiLeft + mousePadding, guiTop + SCREEN_Y + 20 + (15 * i), 0).endVertex();
                     }
                     tessellator.draw();
-                    GL11.glEnable(GL11.GL_TEXTURE_2D);
-                    mc.fontRenderer.drawString(localizedName, centeredX(localizedName), guiTop + SCREEN_Y + 20 + (15 * i), selected ? TEXT_HIGHLIGHT_COLOR : TEXT_COLOR);
+                    GlStateManager.enableTexture2D();
+                    mc.fontRendererObj.drawString(localizedName, centeredX(localizedName), guiTop + SCREEN_Y + 20 + (15 * i), selected ? TEXT_HIGHLIGHT_COLOR : TEXT_COLOR);
                 }
             }
-        } else if(currentPage == null){
+        } else if (currentPage == null) {
             this.currentPage = this.currentEntry.pages.getFirst();
         }
 
         if (currentPage != null) {
-            GL11.glPushMatrix();
-            GL11.glTranslated(guiLeft, guiTop, 0);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(guiLeft, guiTop, 0);
             currentPage.renderScreen(this, mouseX, mouseY);
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
         }
     }
 
@@ -165,7 +163,7 @@ extends GuiScreen {
         if (mouseButton == 0) {
             int selection = -1;
             final int mousePadding = 25;
-            final int offset = mc.fontRenderer.FONT_HEIGHT / 2;
+            final int offset = mc.fontRendererObj.FONT_HEIGHT / 2;
             final int standardY = guiTop - offset;
             final int middle = SCREEN_Y + SCREEN_HEIGHT / 2;
 
@@ -197,7 +195,7 @@ extends GuiScreen {
                 if (currentCategory != null) {
                     this.categoryCache = Documentation.get(currentCategory);
                 }
-            } else if(currentEntry == null){
+            } else if (currentEntry == null) {
                 this.currentEntry = getEntry(mouseX, mouseY);
             }
 
@@ -210,15 +208,15 @@ extends GuiScreen {
         }
     }
 
-    private DocumentationEntry getEntry(int x, int y){
-        if(this.categoryCache == null){
+    private DocumentationEntry getEntry(int x, int y) {
+        if (this.categoryCache == null) {
             return null;
         }
 
         int mousePadding = 25;
-        for(int i = 0; i < this.categoryCache.size(); i++){
+        for (int i = 0; i < this.categoryCache.size(); i++) {
             boolean selected = x >= guiLeft + mousePadding && x <= guiLeft + XSIZE - mousePadding && y >= guiTop + SCREEN_Y + 20 + (15 * i) && y <= guiTop + SCREEN_Y + 20 + (15 * i) + 10;
-            if(selected){
+            if (selected) {
                 return this.categoryCache.get(i);
             }
         }
@@ -232,6 +230,6 @@ extends GuiScreen {
     }
 
     private int centeredX(String string) {
-        return guiLeft + SCREEN_X + (SCREEN_WIDTH / 2) - mc.fontRenderer.getStringWidth(string) / 2;
+        return guiLeft + SCREEN_X + (SCREEN_WIDTH / 2) - mc.fontRendererObj.getStringWidth(string) / 2;
     }
 }

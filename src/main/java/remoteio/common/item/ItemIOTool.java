@@ -1,18 +1,17 @@
 package remoteio.common.item;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.world.World;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import remoteio.api.IIOTool;
 import remoteio.common.core.TabRemoteIO;
-import remoteio.common.lib.ModInfo;
 
 /**
  * @author dmillerw
  */
-public class ItemIOTool
-extends Item implements IIOTool {
+public class ItemIOTool extends Item implements IIOTool {
     public ItemIOTool() {
         setMaxDamage(0);
         setMaxStackSize(1);
@@ -20,12 +19,7 @@ extends Item implements IIOTool {
     }
 
     @Override
-    public void registerIcons(IIconRegister register) {
-        this.itemIcon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "tool");
-    }
-
-    @Override
-    public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
         return true;
     }
 }

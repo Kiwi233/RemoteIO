@@ -40,7 +40,7 @@ public class Documentation {
         register(Category.ITEM, list);
     }
 
-    public static enum Category {
+    public enum Category {
         BLOCK,
         ITEM,
         OTHER

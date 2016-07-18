@@ -1,7 +1,5 @@
 package remoteio.common.recipe;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -9,6 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import remoteio.common.item.ItemWirelessTransmitter;
 import remoteio.common.lib.ModBlocks;
 import remoteio.common.lib.ModItems;
@@ -38,7 +39,7 @@ public class RecipeRemoteInventory implements IRecipe {
         int interfacesFound = 0;
         int transmittersFound = 0;
 
-        for (int i=0; i<inventoryCrafting.getSizeInventory(); i++) {
+        for (int i = 0; i < inventoryCrafting.getSizeInventory(); i++) {
             ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
             if (itemStack != null) {
                 if (Block.getBlockFromItem(itemStack.getItem()) == ModBlocks.remoteInterface) {
@@ -58,7 +59,7 @@ public class RecipeRemoteInventory implements IRecipe {
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inventoryCrafting) {
-        for (int i=0; i<inventoryCrafting.getSizeInventory(); i++) {
+        for (int i = 0; i < inventoryCrafting.getSizeInventory(); i++) {
             ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
             if (itemStack != null) {
                 if (itemStack.getItem() == ModItems.wirelessTransmitter) {
@@ -81,5 +82,10 @@ public class RecipeRemoteInventory implements IRecipe {
     @Override
     public ItemStack getRecipeOutput() {
         return new ItemStack(ModBlocks.remoteInventory);
+    }
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
 }

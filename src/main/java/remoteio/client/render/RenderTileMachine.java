@@ -1,29 +1,33 @@
 package remoteio.client.render;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import remoteio.client.helper.IORenderHelper;
-import remoteio.common.block.BlockMachine;
-import remoteio.common.core.helper.ArrayHelper;
+import remoteio.common.lib.ModBlocks;
 import remoteio.common.tile.TileMachineHeater;
 import remoteio.common.tile.TileMachineReservoir;
+import remoteio.common.tile.core.TileCore;
 
 /**
  * @author dmillerw
  */
-public class RenderTileMachine extends TileEntitySpecialRenderer {
+public class RenderTileMachine extends TileEntitySpecialRenderer<TileCore> {
 
     @Override
-    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void renderTileEntityAt(TileCore tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
         boolean render = false;
         if (tileEntity instanceof TileMachineReservoir) if (((TileMachineReservoir) tileEntity).filled) render = true;
         if (tileEntity instanceof TileMachineHeater) if (((TileMachineHeater) tileEntity).filled) render = true;
         if (!render) return;
 
-        IIcon icon = ArrayHelper.safeGetArray(BlockMachine.overlays, tileEntity.getBlockMetadata());
+        ItemStack machineItem = new ItemStack(Item.getItemFromBlock(ModBlocks.machine));
+        TextureAtlasSprite icon = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getParticleIcon(machineItem.getItem(), machineItem.getItemDamage());
 
         GlStateManager.pushMatrix();
         GlStateManager.disableLighting();

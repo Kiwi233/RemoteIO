@@ -48,8 +48,8 @@ public class ContainerIntelligentWorkbench extends Container {
 
         if (i == 2 && itemstack.getItem() == itemstack1.getItem() && itemstack.stackSize == 1 && itemstack1.stackSize == 1 && itemstack.getItem().isRepairable()) {
             Item item = itemstack.getItem();
-            int j1 = item.getMaxDamage() - itemstack.getItemDamageForDisplay();
-            int k = item.getMaxDamage() - itemstack1.getItemDamageForDisplay();
+            int j1 = item.getMaxDamage() - itemstack.getItemDamage();
+            int k = item.getMaxDamage() - itemstack1.getItemDamage();
             int l = j1 + k + item.getMaxDamage() * 5 / 100;
             int i1 = item.getMaxDamage() - l;
 
@@ -156,13 +156,13 @@ public class ContainerIntelligentWorkbench extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
-        return player.getDistanceSq((double) tileIntelligentWorkbench.xCoord + 0.5D, (double) tileIntelligentWorkbench.yCoord + 0.5D, (double) tileIntelligentWorkbench.zCoord + 0.5D) <= 64.0D;
+        return player.getDistanceSq((double) tileIntelligentWorkbench.getPos().getX() + 0.5D, (double) tileIntelligentWorkbench.getPos().getY() + 0.5D, (double) tileIntelligentWorkbench.getPos().getZ() + 0.5D) <= 64.0D;
     }
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotNumber) {
         ItemStack itemstack = null;
-        Slot slot = (Slot) this.inventorySlots.get(slotNumber);
+        Slot slot = this.inventorySlots.get(slotNumber);
 
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
@@ -187,7 +187,7 @@ public class ContainerIntelligentWorkbench extends Container {
             }
 
             if (itemstack1.stackSize == 0) {
-                slot.putStack((ItemStack) null);
+                slot.putStack(null);
             } else {
                 slot.onSlotChanged();
             }
@@ -203,7 +203,7 @@ public class ContainerIntelligentWorkbench extends Container {
     }
 
     @Override
-    public boolean func_94530_a(ItemStack stack, Slot slot) {
-        return slot.inventory != this.craftResult && super.func_94530_a(stack, slot);
+    public boolean canMergeSlot(ItemStack stack, Slot slot) {
+        return slot.inventory != this.craftResult && super.canMergeSlot(stack, slot);
     }
 }

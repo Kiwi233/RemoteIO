@@ -1,9 +1,9 @@
 package remoteio.client.documentation;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.StatCollector;
+import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import remoteio.client.gui.GuiDocumentation;
 import remoteio.common.lib.Strings;
 
@@ -20,15 +20,17 @@ implements IDocumentationPage {
 
     @Override
     public void renderScreen(GuiScreen guiScreen, int mouseX, int mouseY) {
-        FontRenderer fRenderer = FMLClientHandler.instance().getClient().fontRenderer;
-        String localized = StatCollector.translateToLocal(this.unlocalizedPrefix);
+        FontRenderer fRenderer = FMLClientHandler.instance().getClient().fontRendererObj;
+        String localized = I18n.format(this.unlocalizedPrefix);
         String[] lines = Strings.wrap(localized, 20).split("\n");
         int x = 15;
         int y = 0;
-        for(String str : lines){
+        for (String str : lines) {
             fRenderer.drawString(str, x, y += fRenderer.FONT_HEIGHT + 2, GuiDocumentation.TEXT_COLOR);
         }
     }
 
-    @Override public void updateScreen(GuiScreen guiScreen) {}
+    @Override
+    public void updateScreen(GuiScreen guiScreen) {
+    }
 }

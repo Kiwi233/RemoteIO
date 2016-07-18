@@ -5,16 +5,18 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 import remoteio.client.gui.button.GuiBetterButton;
 import remoteio.common.inventory.container.ContainerNull;
 import remoteio.common.lib.ModInfo;
 import remoteio.common.network.PacketHandler;
 import remoteio.common.network.packet.PacketServerSetChannel;
 import remoteio.common.tile.TileTransceiver;
+
+import java.io.IOException;
 
 /**
  * @author dmillerw
@@ -54,7 +56,7 @@ public class GuiTileSetChannel extends GuiContainer {
 
         buttonList.add(buttonDec = new GuiBetterButton(0, guiLeft + 107, guiTop + 19, 12, 12, "-"));
         buttonList.add(buttonInc = new GuiBetterButton(1, guiLeft + 121, guiTop + 19, 12, 12, "+"));
-        textFieldChannel = new GuiTextField(mc.fontRenderer, 5, 20, 100, 10);
+        textFieldChannel = new GuiTextField(0, mc.fontRendererObj, 5, 20, 100, 10);
         textFieldChannel.setFocused(true);
         textFieldChannel.setCanLoseFocus(false);
         textFieldChannel.setText(String.valueOf(tileTransceiver.channel));
@@ -72,19 +74,19 @@ public class GuiTileSetChannel extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float partial, int mouseX, int mouseY) {
         Minecraft.getMinecraft().renderEngine.bindTexture(GUI_BLANK);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        GL11.glColor4f(1, 1, 1, 1);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        fontRendererObj.drawString(StatCollector.translateToLocal("container.remoteio.channel"), 5, 5, 4210752);
-        fontRendererObj.drawSplitString(StatCollector.translateToLocal("container.remoteio.channel_desc"), 5, 35, 170, 4210752);
+        fontRendererObj.drawString(I18n.format("container.remoteio.channel"), 5, 5, 4210752);
+        fontRendererObj.drawSplitString(I18n.format("container.remoteio.channel_desc"), 5, 35, 170, 4210752);
         textFieldChannel.drawTextBox();
     }
 
     @Override
-    protected void keyTyped(char character, int key) {
+    protected void keyTyped(char character, int key) throws IOException {
         super.keyTyped(character, key);
         if (key == Keyboard.KEY_BACK || Character.isDigit(character)) {
             textFieldChannel.textboxKeyTyped(character, key);
@@ -108,9 +110,7 @@ public class GuiTileSetChannel extends GuiContainer {
     public void onGuiClosed() {
         super.onGuiClosed();
         PacketServerSetChannel packet = new PacketServerSetChannel();
-        packet.x = tileTransceiver.xCoord;
-        packet.y = tileTransceiver.yCoord;
-        packet.z = tileTransceiver.zCoord;
+        packet.pos = tileTransceiver.getPos();
         packet.channel = channel;
         PacketHandler.INSTANCE.sendToServer(packet);
     }

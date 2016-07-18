@@ -16,7 +16,7 @@ import remoteio.common.core.helper.PlayerHelper;
 import remoteio.common.core.helper.mod.IC2Helper;
 import remoteio.common.core.helper.transfer.IC2TransferHelper;
 import remoteio.common.core.helper.transfer.RFTransferHelper;
-import remoteio.common.inventory.wrapper.InventoryArray;
+import remoteio.common.inventory.InventoryArray;
 import remoteio.common.item.ItemWirelessTransmitter;
 import remoteio.common.lib.DependencyInfo;
 import remoteio.common.lib.VisualState;

@@ -3,7 +3,7 @@ package remoteio.client;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -13,7 +13,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -36,7 +35,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        RenderingRegistry.registerBlockHandler(new RenderBlockRemoteInterface());
+        //RenderingRegistry.registerBlockHandler(new RenderBlockRemoteInterface());
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileRemoteInterface.class, new RenderTileRemoteInterface());
         ClientRegistry.bindTileEntitySpecialRenderer(TileRemoteInventory.class, new RenderTileRemoteInventory());
@@ -77,7 +76,7 @@ public class ClientProxy extends CommonProxy {
         if (player instanceof EntityPlayerMP) {
             super.activateBlock(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
         } else {
-            EntityClientPlayerMP entityClientPlayerMP = (EntityClientPlayerMP) player;
+            EntityPlayerSP entityClientPlayerMP = (EntityPlayerSP) player;
             ClientProxyPlayer proxyPlayer = new ClientProxyPlayer(entityClientPlayerMP);
             proxyPlayer.inventory = entityClientPlayerMP.inventory;
             proxyPlayer.inventoryContainer = entityClientPlayerMP.inventoryContainer;
@@ -88,11 +87,11 @@ public class ClientProxy extends CommonProxy {
             if (block != null) {
                 SoundHandler.INSTANCE.translateNextSound(pos);
 
-                if (proxyPlayer.getHeldItem() != null) {
-                    if (proxyPlayer.getHeldItem().getItem().onItemUseFirst(proxyPlayer.getHeldItem(), proxyPlayer, proxyPlayer.worldObj, pos, side, hitX, hitY, hitZ))
+                if (proxyPlayer.getHeldItemMainhand() != null) {
+                    if (proxyPlayer.getHeldItemMainhand().getItem().onItemUseFirst(proxyPlayer.getHeldItemMainhand(), proxyPlayer, proxyPlayer.worldObj, pos, side, hitX, hitY, hitZ, hand))
                         return;
                 }
-                block.onBlockActivated(entityClientPlayerMP.worldObj, pos, proxyPlayer, side, hitX, hitY, hitZ);
+                block.onBlockActivated(entityClientPlayerMP.worldObj, pos, state, proxyPlayer, hand, heldItem, side, hitX, hitY, hitZ);
             }
 
             if (entityClientPlayerMP.openContainer != proxyPlayer.openContainer) {

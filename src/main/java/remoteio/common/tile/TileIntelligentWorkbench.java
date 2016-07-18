@@ -14,8 +14,8 @@ public class TileIntelligentWorkbench extends TileEntity {
     public InventoryTileCrafting craftMatrix = new InventoryTileCrafting(3, 3);
 
     @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound) {
-        super.writeToNBT(nbtTagCompound);
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
 
         NBTTagList nbtTagList = new NBTTagList();
         for (int i = 0; i < this.craftMatrix.getSizeInventory(); ++i) {
@@ -26,7 +26,8 @@ public class TileIntelligentWorkbench extends TileEntity {
                 nbtTagList.appendTag(data);
             }
         }
-        nbtTagCompound.setTag("Items", nbtTagList);
+        nbt.setTag("Items", nbtTagList);
+        return nbt;
     }
 
     @Override
@@ -43,10 +44,5 @@ public class TileIntelligentWorkbench extends TileEntity {
                 this.craftMatrix.setInventorySlotContents(b0, ItemStack.loadItemStackFromNBT(data));
             }
         }
-    }
-
-    @Override
-    public boolean canUpdate() {
-        return false;
     }
 }

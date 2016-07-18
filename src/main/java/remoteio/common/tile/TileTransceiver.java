@@ -2,6 +2,7 @@ package remoteio.common.tile;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.ForgeDirection;
 import remoteio.common.RemoteIO;
 import remoteio.common.tile.core.TileCore;
@@ -11,7 +12,7 @@ import remoteio.common.tile.core.TileCore;
  */
 public class TileTransceiver extends TileCore {
 
-    public ForgeDirection orientation = ForgeDirection.UNKNOWN;
+    public EnumFacing orientation = EnumFacing.UNKNOWN;
 
     public int channel = 0;
 

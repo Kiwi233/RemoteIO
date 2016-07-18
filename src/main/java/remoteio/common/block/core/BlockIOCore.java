@@ -1,22 +1,21 @@
 package remoteio.common.block.core;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import remoteio.common.RemoteIO;
 import remoteio.common.core.TabRemoteIO;
 import remoteio.common.core.helper.InventoryHelper;
 import remoteio.common.core.helper.mod.ToolHelper;
-import remoteio.common.lib.ModInfo;
 import remoteio.common.tile.TileRemoteInterface;
 import remoteio.common.tile.core.TileIOCore;
 
@@ -24,13 +23,9 @@ import remoteio.common.tile.core.TileIOCore;
  * @author dmillerw
  */
 public abstract class BlockIOCore extends BlockContainer {
-    @SideOnly(Side.CLIENT)
-    public static IIcon[] icons;
-    @SideOnly(Side.CLIENT)
-    public static IIcon[] overlays;
 
     public BlockIOCore() {
-        super(Material.iron);
+        super(Material.IRON);
         setHardness(5F);
         setResistance(5F);
         setCreativeTab(TabRemoteIO.TAB);
@@ -49,13 +44,12 @@ public abstract class BlockIOCore extends BlockContainer {
                         if (tile instanceof TileRemoteInterface)
                             ((TileRemoteInterface) tile).updateRotation(1);
                     } else {
-                        if (!(tile instanceof TileRemoteInterface) || !((TileRemoteInterface)tile).locked)
+                        if (!(tile instanceof TileRemoteInterface) || !((TileRemoteInterface) tile).locked)
                             player.openGui(RemoteIO.instance, getGuiID(), world, x, y, z);
                     }
                 }
             }
         }
-
         return false;
     }
 
@@ -74,26 +68,19 @@ public abstract class BlockIOCore extends BlockContainer {
         super.breakBlock(world, x, y, z, block, meta);
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public boolean isOpaqueCube() {
+    @SideOnly(Side.CLIENT)
+    public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean renderAsNormalBlock() {
         return false;
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        return icons[0];
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
         TileIOCore tile = (TileIOCore) world.getTileEntity(x, y, z);
 
@@ -106,21 +93,6 @@ public abstract class BlockIOCore extends BlockContainer {
         }
 
         return icons[0];
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister register) {
-        icons = new IIcon[4];
-        icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "inactive");
-        icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "inactive_blink");
-        icons[2] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "active");
-        icons[3] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "active_blink");
-        overlays = new IIcon[4];
-        overlays[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "overlay/inactive");
-        overlays[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "overlay/inactive_blink");
-        overlays[2] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "overlay/active");
-        overlays[3] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "overlay/active_blink");
     }
 
     @Override

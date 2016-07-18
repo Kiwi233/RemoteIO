@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -39,23 +41,24 @@ public class PacketServerOpenRemoteGUI implements IMessage, IMessageHandler<Pack
         Container container = entityPlayerMP.openContainer;
         ServerProxyPlayer proxyPlayer = new ServerProxyPlayer(entityPlayerMP);
 
-        proxyPlayer.playerNetServerHandler = entityPlayerMP.playerNetServerHandler;
+        proxyPlayer.connection = entityPlayerMP.connection;
         proxyPlayer.inventory = entityPlayerMP.inventory;
         proxyPlayer.currentWindowId = entityPlayerMP.currentWindowId;
         proxyPlayer.inventoryContainer = entityPlayerMP.inventoryContainer;
         proxyPlayer.openContainer = entityPlayerMP.openContainer;
         proxyPlayer.worldObj = entityPlayerMP.worldObj;
 
-        Block block = proxyPlayer.worldObj.getBlock(message.x, message.y, message.z);
+        BlockPos pos = new BlockPos(message.x, message.y, message.z);
+        Block block = proxyPlayer.worldObj.getBlockState(pos).getBlock();
         if (block != null)
-            block.onBlockActivated(proxyPlayer.worldObj, message.x, message.y, message.z, proxyPlayer, 0, 0, 0, 0);
+            block.onBlockActivated(proxyPlayer.worldObj, pos, proxyPlayer.worldObj.getBlockState(pos), proxyPlayer, proxyPlayer.getActiveHand(), proxyPlayer.getHeldItemMainhand(), EnumFacing.DOWN, 0, 0, 0);
 
-        entityPlayerMP.theItemInWorldManager.thisPlayerMP = entityPlayerMP;
+        entityPlayerMP.interactionManager.thisPlayerMP = entityPlayerMP;
         if (container != proxyPlayer.openContainer) {
             entityPlayerMP.openContainer = proxyPlayer.openContainer;
         }
 
-        ContainerHandler.INSTANCE.containerWhitelist.put(entityPlayerMP.getCommandSenderName(), entityPlayerMP.openContainer);
+        ContainerHandler.INSTANCE.containerWhitelist.put(entityPlayerMP.getName(), entityPlayerMP.openContainer);
 
         return null;
     }

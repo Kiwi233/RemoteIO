@@ -12,27 +12,27 @@ public class ServerProxyPlayer extends EntityPlayerMP {
     private EntityPlayerMP parentPlayer;
 
     public ServerProxyPlayer(EntityPlayerMP parentPlayer) {
-        super(parentPlayer.mcServer, (WorldServer) parentPlayer.worldObj, parentPlayer.getGameProfile(), parentPlayer.theItemInWorldManager);
+        super(parentPlayer.mcServer, (WorldServer) parentPlayer.worldObj, parentPlayer.getGameProfile(), parentPlayer.interactionManager);
         this.parentPlayer = parentPlayer;
     }
 
     @Override
-    public float getDistanceToEntity(Entity p_70032_1_) {
+    public float getDistanceToEntity(Entity entity) {
         return 6;
     }
 
     @Override
-    public double getDistanceSq(double p_70092_1_, double p_70092_3_, double p_70092_5_) {
+    public double getDistanceSq(double x, double y, double z) {
         return 6;
     }
 
     @Override
-    public double getDistance(double p_70011_1_, double p_70011_3_, double p_70011_5_) {
+    public double getDistance(double x, double y, double z) {
         return 6;
     }
 
     @Override
-    public double getDistanceSqToEntity(Entity p_70068_1_) {
+    public double getDistanceSqToEntity(Entity entity) {
         return 6;
     }
 }

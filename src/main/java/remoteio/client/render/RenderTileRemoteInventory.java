@@ -1,44 +1,41 @@
 package remoteio.client.render;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.item.Item;
 import remoteio.client.helper.IORenderHelper;
-import remoteio.common.block.core.BlockIOCore;
+import remoteio.common.lib.ModBlocks;
 import remoteio.common.tile.TileRemoteInventory;
 
 /**
  * @author dmillerw
  */
-public class RenderTileRemoteInventory extends TileEntitySpecialRenderer {
-    public void renderRemoteInterfaceAt(TileRemoteInventory tile, double x, double y, double z, float partial) {
+public class RenderTileRemoteInventory extends TileEntitySpecialRenderer<TileRemoteInventory> {
+
+    public void renderRemoteInterfaceAt(TileRemoteInventory tile, double x, double y, double z, float partialTicks, int destroyStage) {
         if (!tile.visualState.isCamouflage()) {
-            IIcon icon = BlockIOCore.overlays[tile.visualState.ordinal()];
+            TextureAtlasSprite icon = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getParticleIcon(Item.getItemFromBlock(ModBlocks.remoteInventory));
 
-            GL11.glPushMatrix();
-            GL11.glDisable(GL11.GL_LIGHTING);
-            GL11.glTranslated(x, y, z);
+            GlStateManager.pushMatrix();
+            GlStateManager.disableLighting();
+            GlStateManager.translate(x, y, z);
 
-            bindTexture(TextureMap.locationBlocksTexture);
+            bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
             char c0 = 61680;
             int j = c0 % 65536;
             int k = c0 / 65536;
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j / 1.0F, (float) k / 1.0F);
-            GL11.glColor4f(1, 1, 1, 1);
+            GlStateManager.color(1, 1, 1, 1);
 
             IORenderHelper.renderCube(icon);
 
-            GL11.glEnable(GL11.GL_LIGHTING);
-            GL11.glPopMatrix();
+            GlStateManager.enableLighting();
+            GlStateManager.popMatrix();
         }
-    }
-
-    @Override
-    public void renderTileEntityAt(TileEntity var1, double var2, double var4, double var6, float var8) {
-        renderRemoteInterfaceAt((TileRemoteInventory) var1, var2, var4, var6, var8);
     }
 }

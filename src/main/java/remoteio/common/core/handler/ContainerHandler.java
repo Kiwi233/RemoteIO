@@ -1,10 +1,10 @@
 package remoteio.common.core.handler;
 
 import com.google.common.collect.Maps;
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.inventory.Container;
-import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.Map;
 
@@ -17,10 +17,10 @@ public class ContainerHandler {
     public Map<String, Container> containerWhitelist = Maps.newHashMap();
 
     @SubscribeEvent
-    public void onContainerOpen(PlayerOpenContainerEvent event) {
-        if (event.entityPlayer.openContainer != null && event.entityPlayer.openContainer != event.entityPlayer.inventoryContainer) {
-            Container whitelisted = containerWhitelist.get(event.entityPlayer.getCommandSenderName());
-            if (whitelisted != null && whitelisted == event.entityPlayer.openContainer)
+    public void onContainerOpen(PlayerContainerEvent.Open event) {
+        if (event.getEntityPlayer().openContainer != null && event.getEntityPlayer().openContainer != event.getEntityPlayer().inventoryContainer) {
+            Container whitelisted = containerWhitelist.get(event.getEntityPlayer().getName());
+            if (whitelisted != null && whitelisted == event.getEntityPlayer().openContainer)
                 event.setResult(Event.Result.ALLOW);
         }
     }

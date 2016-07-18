@@ -1,10 +1,10 @@
 package remoteio.common.core.handler;
 
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import remoteio.common.lib.ModItems;
 
 /**
@@ -13,53 +13,56 @@ import remoteio.common.lib.ModItems;
 public class PlayerEventHandler {
 
     @SubscribeEvent
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-            ItemStack held = event.entityPlayer.getHeldItem();
-            boolean preventBlock = false;
-            boolean preventItem = false;
+    public void onPlayerInteract(PlayerInteractEvent.RightClickBlock event) {
+        ItemStack held = event.getEntityPlayer().getHeldItemMainhand();
+        boolean preventBlock = false;
+        boolean preventItem = false;
 
-            for (ItemStack itemStack : event.entityPlayer.inventory.mainInventory) {
-                if (itemStack != null) {
-                    if (itemStack.getItem() == ModItems.interactionInhibitor) {
-                        if (itemStack.getItemDamage() == 1) {
-                            preventBlock = true;
-                            break;
-                        } else if (itemStack.getItemDamage() == 3) {
-                            preventItem = true;
-                            break;
-                        }
+        for (ItemStack itemStack : event.getEntityPlayer().inventory.mainInventory) {
+            if (itemStack != null) {
+                if (itemStack.getItem() == ModItems.interactionInhibitor) {
+                    if (itemStack.getItemDamage() == 1) {
+                        preventBlock = true;
+                        break;
+                    } else if (itemStack.getItemDamage() == 3) {
+                        preventItem = true;
+                        break;
                     }
                 }
             }
+        }
 
-            if (held != null && held.hasTagCompound() && held.getTagCompound().hasKey("inhibit")) {
-                byte inhibitor = held.getTagCompound().getByte("inhibit");
-                switch (inhibitor) {
-                    case 0: preventBlock = true; break;
-                    case 1: preventItem = true; break;
-                    default: break;
-                }
+        if (held != null && held.hasTagCompound() && held.getTagCompound().hasKey("inhibit")) {
+            byte inhibitor = held.getTagCompound().getByte("inhibit");
+            switch (inhibitor) {
+                case 0:
+                    preventBlock = true;
+                    break;
+                case 1:
+                    preventItem = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // Don't fuck with things if they shouldn't be fucked with
+        if (preventBlock || preventItem) {
+            if (preventBlock) {
+                event.setUseBlock(Event.Result.DENY);
+            } else {
+                event.setUseBlock(Event.Result.ALLOW);
             }
 
-            // Don't fuck with things if they shouldn't be fucked with
-            if (preventBlock || preventItem) {
-                if (preventBlock) {
-                    event.useBlock = Event.Result.DENY;
+            if (preventItem) {
+                // Prevents annoying client block flicker
+                if (held != null && held.getItem() instanceof ItemBlock) {
+                    event.setCanceled(true);
                 } else {
-                    event.useBlock = Event.Result.ALLOW;
+                    event.setUseBlock(Event.Result.DENY);
                 }
-
-                if (preventItem) {
-                    // Prevents annoying client block flicker
-                    if (held != null && held.getItem() instanceof ItemBlock) {
-                        event.setCanceled(true);
-                    } else {
-                        event.useItem = Event.Result.DENY;
-                    }
-                } else {
-                    event.useItem = Event.Result.ALLOW;
-                }
+            } else {
+                event.setUseBlock(Event.Result.ALLOW);
             }
         }
     }

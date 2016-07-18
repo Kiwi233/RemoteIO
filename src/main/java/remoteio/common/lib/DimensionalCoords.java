@@ -1,9 +1,11 @@
 package remoteio.common.lib;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import remoteio.common.RemoteIO;
 
@@ -12,11 +14,11 @@ import remoteio.common.RemoteIO;
  */
 public class DimensionalCoords {
     public static DimensionalCoords create(TileEntity tile) {
-        return new DimensionalCoords(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+        return new DimensionalCoords(tile.getWorld(), tile.getPos());
     }
 
     public static DimensionalCoords create(EntityLivingBase entity) {
-        return new DimensionalCoords(entity.worldObj, entity.posX, entity.posY, entity.posZ);
+        return new DimensionalCoords(entity.worldObj, entity.getPosition());
     }
 
 
@@ -26,33 +28,30 @@ public class DimensionalCoords {
 
     public int dimensionID;
 
-    public int x;
-    public int y;
-    public int z;
+    public BlockPos pos;
 
-    public DimensionalCoords(World world, int x, int y, int z) {
-        this(world.provider.dimensionId, x, y, z);
-    }
-
-    public DimensionalCoords(World world, double x, double y, double z) {
-        this(world.provider.dimensionId, x, y, z);
+    public DimensionalCoords(World world, BlockPos pos) {
+        this(world.provider.getDimension(), pos);
     }
 
     public DimensionalCoords(int dimensionID, double x, double y, double z) {
         this(dimensionID, (int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
     }
 
+    public DimensionalCoords(int dimensionID, BlockPos pos) {
+        this.dimensionID = dimensionID;
+        this.pos = pos;
+    }
+
     public DimensionalCoords(int dimensionID, int x, int y, int z) {
         this.dimensionID = dimensionID;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = new BlockPos(x, y, z);
     }
 
     public boolean withinRange(DimensionalCoords coords, int range) {
-        int xRange = Math.abs(this.x - coords.x);
-        int yRange = Math.abs(this.y - coords.y);
-        int zRange = Math.abs(this.z - coords.z);
+        int xRange = Math.abs(this.pos.getX() - coords.pos.getX());
+        int yRange = Math.abs(this.pos.getY() - coords.pos.getY());
+        int zRange = Math.abs(this.pos.getZ() - coords.pos.getZ());
 
         return (xRange <= range && yRange <= range && zRange <= range);
     }
@@ -60,7 +59,7 @@ public class DimensionalCoords {
     /* WORLD WRAPPERS */
 
     public boolean inWorld(World world) {
-        return world.provider.dimensionId == this.dimensionID;
+        return world.provider.getDimension() == this.dimensionID;
     }
 
     public World getWorld() {
@@ -68,56 +67,56 @@ public class DimensionalCoords {
     }
 
     public boolean blockExists() {
-        return getBlock() != null && !getBlock().isAir(getWorld(), x, y, z);
+        return getBlock() != null && !getBlock().isAir(getState(getWorld()), getWorld(), pos);
     }
 
     public boolean blockExists(World world) {
-        return getBlock(world) != null && !getBlock().isAir(world, x, y, z);
+        return getBlock(world) != null && !getBlock().isAir(getState(world), world, pos);
     }
 
     public Block getBlock() {
-        return getWorld() != null ? getWorld().getBlock(x, y, z) : null;
+        return getWorld() != null ? getWorld().getBlockState(pos).getBlock() : null;
     }
 
-    public int getMeta() {
-        return getWorld() != null ? getWorld().getBlockMetadata(x, y, z) : 0;
+    public IBlockState getState() {
+        return getWorld() != null ? getWorld().getBlockState(pos) : null;
     }
 
     public TileEntity getTileEntity() {
-        return getWorld() != null ? getWorld().getTileEntity(x, y, z) : null;
+        return getWorld() != null ? getWorld().getTileEntity(pos) : null;
     }
 
     public Block getBlock(World world) {
-        return world.getBlock(x, y, z);
+        return getState(world).getBlock();
     }
 
-    public int getMeta(World world) {
-        return world.getBlockMetadata(x, y, z);
+    public IBlockState getState(World world) {
+        return world.getBlockState(pos);
     }
 
     public TileEntity getTileEntity(World world) {
-        return world.getTileEntity(x, y, z);
+        return world.getTileEntity(pos);
     }
 
     public void markForUpdate() {
-        if (getWorld() != null) getWorld().markBlockForUpdate(x, y, z);
+        if (getWorld() != null) getWorld().markBlockForUpdate(pos);
     }
 
     /* END */
 
     public void writeToNBT(NBTTagCompound nbt) {
         nbt.setInteger("dimension", this.dimensionID);
-        nbt.setInteger("x", this.x);
-        nbt.setInteger("y", this.y);
-        nbt.setInteger("z", this.z);
+        nbt.setInteger("x", this.pos.getX());
+        nbt.setInteger("y", this.pos.getZ());
+        nbt.setInteger("z", this.pos.getZ());
     }
 
     public int hashCode() {
-        return this.dimensionID & this.x & this.y & this.z;
+        return this.dimensionID & this.pos.getX() & this.pos.getY() & this.pos.getZ();
     }
 
     public DimensionalCoords copy() {
-        return new DimensionalCoords(this.dimensionID, this.x, this.y, this.z);
+        return new DimensionalCoords(this.dimensionID, this.pos);
     }
 
     @Override
@@ -126,20 +125,15 @@ public class DimensionalCoords {
             return false;
         }
 
-        return equals((DimensionalCoords)obj);
+        return equals((DimensionalCoords) obj);
     }
 
     public boolean equals(DimensionalCoords coords) {
-        return (
-                (this.dimensionID == coords.dimensionID) &&
-                        (this.x == coords.x) &&
-                        (this.y == coords.y) &&
-                        (this.z == coords.z)
-        );
+        return (this.dimensionID == coords.dimensionID) && (this.pos == coords.pos);
     }
 
     @Override
     public String toString() {
-        return "[" + dimensionID + " : " + x + ", " + y + ", " + z + "]";
+        return "[" + dimensionID + " : " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]";
     }
 }

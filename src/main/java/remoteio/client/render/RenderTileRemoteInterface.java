@@ -1,70 +1,72 @@
 package remoteio.client.render;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
-import org.lwjgl.opengl.GL11;
 import remoteio.client.helper.IORenderHelper;
-import remoteio.common.block.core.BlockIOCore;
 import remoteio.common.lib.DimensionalCoords;
 import remoteio.common.lib.VisualState;
 import remoteio.common.tile.TileRemoteInterface;
+import remoteio.common.tile.core.TileIOCore;
 
 /**
  * @author dmillerw
  */
-public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
-    private RenderBlocks renderBlocks;
+public class RenderTileRemoteInterface extends TileEntitySpecialRenderer<TileRemoteInterface> {
 
     private static boolean shouldRender(VisualState visualState) {
         return visualState == VisualState.CAMOUFLAGE_REMOTE || visualState == VisualState.CAMOUFLAGE_BOTH;
     }
 
-    public void renderRemoteInterfaceAt(TileRemoteInterface tile, double x, double y, double z, float partial) {
-        if (tile.remotePosition != null && tile.remotePosition.inWorld(tile.getWorldObj()) && tile.visualState.isCamouflage()) {
-            WorldClient worldClient = FMLClientHandler.instance().getWorldClient();
-            DimensionalCoords there = tile.remotePosition;
+    @Override
+    public void renderTileEntityAt(TileRemoteInterface remoteInterface, double x, double y, double z, float partialTicks, int destroyStage) {
+        Minecraft mc = Minecraft.getMinecraft();
+        WorldClient worldClient = FMLClientHandler.instance().getWorldClient();
 
-            Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+        if (remoteInterface.remotePosition != null && remoteInterface.remotePosition.inWorld(remoteInterface.getWorld()) && remoteInterface.visualState.isCamouflage()) {
+            DimensionalCoords there = remoteInterface.remotePosition;
 
-            GL11.glPushMatrix();
+            mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
-            GL11.glTranslated(x, y, z);
-            GL11.glTranslated(0.5, 0.5, 0.5);
-            GL11.glRotated(90 * tile.rotationY, 0, 1, 0);
-            GL11.glTranslated(-0.5, -0.5, -0.5);
+            GlStateManager.pushMatrix();
+
+            GlStateManager.translate(x, y, z);
+            GlStateManager.translate(0.5, 0.5, 0.5);
+            GlStateManager.rotate(90 * remoteInterface.rotationY, 0, 1, 0);
+            GlStateManager.translate(-0.5, -0.5, -0.5);
 
             TileEntity remoteTile = there.getTileEntity(worldClient);
 
             if (remoteTile != null) {
                 try {
-                    TileEntityRendererDispatcher.instance.renderTileEntityAt(tile.remotePosition.getTileEntity(worldClient), 0, 0, 0, partial);
+                    TileEntityRendererDispatcher.instance.renderTileEntityAt(remoteInterface.remotePosition.getTileEntity(worldClient), 0, 0, 0, partialTicks);
                 } catch (Exception ex) {
-                    FMLLog.warning("Failed to render " + tile.remotePosition.getTileEntity(worldClient).getClass().getSimpleName() + ". Reason: " + ex.getLocalizedMessage());
+                    FMLLog.warning("Failed to render " + remoteInterface.remotePosition.getTileEntity(worldClient).getClass().getSimpleName() + ". Reason: " + ex.getLocalizedMessage());
 
                     // Maybe bring this back if becomes an issue
 //					tile.camoRenderLock = true;
-                    tile.markForRenderUpdate();
+                    remoteInterface.markForRenderUpdate();
                 }
             }
 
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
         } else {
-            if (!tile.visualState.isCamouflage()) {
-                IIcon icon = BlockIOCore.overlays[tile.visualState.ordinal()];
+            if (!remoteInterface.visualState.isCamouflage()) {
+                TileIOCore tile = (TileIOCore) worldClient.getTileEntity(new BlockPos(x, y, z));
+                TextureAtlasSprite icon = mc.getRenderItem().getItemModelMesher().getParticleIcon(tile.simpleCamo.getItem(), tile.simpleCamo.getItemDamage());
 
-                GL11.glPushMatrix();
-                GL11.glDisable(GL11.GL_LIGHTING);
-                GL11.glTranslated(x, y, z);
+                GlStateManager.pushMatrix();
+                GlStateManager.disableLighting();
+                GlStateManager.translate(x, y, z);
 
                 bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -72,23 +74,13 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
                 int j = c0 % 65536;
                 int k = c0 / 65536;
                 OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j / 1.0F, (float) k / 1.0F);
-                GL11.glColor4f(1, 1, 1, 1);
+                GlStateManager.color(1, 1, 1, 1);
 
                 IORenderHelper.renderCube(icon);
 
-                GL11.glEnable(GL11.GL_LIGHTING);
-                GL11.glPopMatrix();
+                GlStateManager.enableLighting();
+                GlStateManager.popMatrix();
             }
         }
-    }
-
-    @Override
-    public void renderTileEntityAt(TileEntity var1, double var2, double var4, double var6, float var8) {
-        renderRemoteInterfaceAt((TileRemoteInterface) var1, var2, var4, var6, var8);
-    }
-
-    @Override
-    public void func_147496_a(World world) {
-        renderBlocks = new RenderBlocks(world);
     }
 }

@@ -1,21 +1,18 @@
 package remoteio.common.item;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import remoteio.common.RemoteIO;
 import remoteio.common.core.TabRemoteIO;
 import remoteio.common.core.helper.PlayerHelper;
 import remoteio.common.lib.DimensionalCoords;
-import remoteio.common.lib.ModInfo;
 import remoteio.common.lib.ModItems;
 import remoteio.common.tile.TileRemoteInterface;
 
@@ -26,32 +23,10 @@ import java.util.List;
  */
 public class ItemWirelessTransmitter
 extends Item {
-    private final IIcon[] icons = new IIcon[2];
-
-    @Override
-    public IIcon getIconIndex(ItemStack stack){
-        boolean bound = getPlayerName(stack) != null;
-        if(bound){
-            return icons[1];
-        } else{
-            return icons[0];
-        }
-    }
-
-    @Override
-    public IIcon getIcon(ItemStack stack, int pass){
-        boolean bound = getPlayerName(stack) != null;
-        if(bound){
-            return icons[1];
-        } else{
-            return icons[0];
-        }
-    }
-
     public static boolean hasValidRemote(EntityPlayer player) {
         for (ItemStack stack : player.inventory.mainInventory) {
             if (stack != null && stack.getItem() == ModItems.wirelessTransmitter) {
-                if (player.getCommandSenderName().equalsIgnoreCase(getPlayerName(stack))) {
+                if (player.getName().equalsIgnoreCase(getPlayerName(stack))) {
                     return true;
                 }
             }
@@ -96,7 +71,7 @@ extends Item {
 
         NBTTagCompound nbt = stack.getTagCompound();
 
-        nbt.setString("player", player.getCommandSenderName());
+        nbt.setString("player", player.getName());
 
         stack.setTagCompound(nbt);
     }
@@ -167,15 +142,15 @@ extends Item {
         String bound = getPlayerName(stack);
 
         if (coords != null) {
-            list.add(String.format(StatCollector.translateToLocal("tooltip.dimension"), DimensionManager.getProvider(coords.dimensionID).getDimensionName()));
-            list.add(String.format(StatCollector.translateToLocal("tooltip.coords"), coords.x, coords.y, coords.z));
+            list.add(String.format(I18n.format("tooltip.dimension"), DimensionManager.getProvider(coords.dimensionID).getDimensionType().getName()));
+            list.add(String.format(I18n.format("tooltip.coords"), coords.x, coords.y, coords.z));
 
             if (bound != null)
                 list.add(" --- ");
         }
 
         if (bound != null) {
-            list.add(String.format(StatCollector.translateToLocal("tooltip.bound"), bound));
+            list.add(String.format(I18n.format("tooltip.bound"), bound));
         }
     }
 
@@ -200,7 +175,7 @@ extends Item {
         if (!world.isRemote) {
             if (player.isSneaking()) {
                 setPlayer(stack, player);
-                player.addChatComponentMessage(new ChatComponentTranslation("chat.target.save"));
+                player.addChatComponentMessage(new TextComponentString("chat.target.save"));
             } else if (stack.hasTagCompound() && stack.getTagCompound().hasKey("position")) {
                 DimensionalCoords coord = ItemLocationChip.getCoordinates(stack);
                 int side = getHitSide(stack);
@@ -213,11 +188,5 @@ extends Item {
         }
 
         return stack;
-    }
-
-    @Override
-    public void registerIcons(IIconRegister register) {
-        this.icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "transmitter");
-        this.icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "transmitter_active");
     }
 }

@@ -53,7 +53,7 @@ public class ContainerIO extends Container {
             this.addSlotToContainer(new Slot(inventoryPlayer, i, 18 + i * 18, 219));
         }
 
-        if (!tile.getWorldObj().isRemote) {
+        if (!tile.getWorld().isRemote) {
             tile.updateVisualState();
         }
     }
@@ -61,7 +61,7 @@ public class ContainerIO extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
         ItemStack itemstack = null;
-        Slot slot = (Slot) this.inventorySlots.get(slotID);
+        Slot slot = this.inventorySlots.get(slotID);
 
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
@@ -104,7 +104,7 @@ public class ContainerIO extends Container {
         Slot slot;
         if (itemStack.isStackable()) {
             while (itemStack.stackSize > 0 && (!reverse && i < slotMax || reverse && i >= slotMin)) {
-                slot = (Slot) this.inventorySlots.get(i);
+                slot = this.inventorySlots.get(i);
                 ItemStack slotStack = slot.getStack();
 
                 if (slot.isItemValid(itemStack) && slotStack != null && slotStack.getItem() == itemStack.getItem() && (!itemStack.getHasSubtypes() || itemStack.getItemDamage() == slotStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(itemStack, slotStack)) {
@@ -140,7 +140,7 @@ public class ContainerIO extends Container {
             }
 
             while (!reverse && i < slotMax || reverse && i >= slotMin) {
-                slot = (Slot) this.inventorySlots.get(i);
+                slot = this.inventorySlots.get(i);
                 ItemStack slotStack = slot.getStack();
 
                 if (slot.isItemValid(itemStack) && slotStack == null) {

@@ -13,8 +13,8 @@ public class SlotLimited extends Slot {
 
     private final Class limiter;
 
-    public SlotLimited(IInventory inventory1, int id, int x, int y, Class limiter) {
-        super(inventory1, id, x, y);
+    public SlotLimited(IInventory inventory, int id, int x, int y, Class limiter) {
+        super(inventory, id, x, y);
 
         this.limiter = limiter;
     }

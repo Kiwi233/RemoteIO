@@ -3,12 +3,11 @@ package remoteio.client.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import remoteio.client.gui.button.GuiButtonCustom;
 import remoteio.common.core.helper.MatrixHelper;
@@ -25,8 +24,6 @@ public class GuiRemoteInterface extends GuiContainer {
 
     private final TileRemoteInterface tile;
 
-    private RenderBlocks renderBlocks;
-
     private Matrix4f initialMatrix;
 
     public GuiRemoteInterface(InventoryPlayer inventoryPlayer, TileRemoteInterface tile) {
@@ -36,8 +33,7 @@ public class GuiRemoteInterface extends GuiContainer {
         this.ySize = 243;
 
         this.tile = tile;
-        this.renderBlocks = new RenderBlocks(tile.getWorldObj());
-        this.initialMatrix = MatrixHelper.getRotationMatrix(Minecraft.getMinecraft().renderViewEntity);
+        this.initialMatrix = MatrixHelper.getRotationMatrix(Minecraft.getMinecraft().getRenderViewEntity());
     }
 
     @Override
@@ -61,26 +57,26 @@ public class GuiRemoteInterface extends GuiContainer {
     }
 
     protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(TEXTURE);
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
 
         if (tile.remotePosition != null) {
-            GL11.glPushMatrix();
+            GlStateManager.pushMatrix();
             double scale = 32;
             //FIXME: This is hard coded for a 32D scale
-            GL11.glTranslated(k + (61 + 37.5), l + (71 + 37.5) - (scale / 2), scale);
-            GL11.glScaled(scale, -scale, scale);
+            GlStateManager.translate(k + (61 + 37.5), l + (71 + 37.5) - (scale / 2), scale);
+            GlStateManager.scale(scale, -scale, scale);
             MatrixHelper.loadMatrix(initialMatrix);
-            GL11.glPushMatrix();
+            GlStateManager.pushMatrix();
 
             //TODO Properly allow for rendering even without upgrades
             TileEntityRendererDispatcher.instance.renderTileEntityAt(tile, -0.5, -0.5, -0.5, 0);
 
-            GL11.glPopMatrix();
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
+            GlStateManager.popMatrix();
         }
 
         for (int i = 0; i < buttonList.size(); i++) {

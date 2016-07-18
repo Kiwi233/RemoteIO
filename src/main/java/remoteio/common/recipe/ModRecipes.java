@@ -1,19 +1,17 @@
 package remoteio.common.recipe;
 
-import appeng.api.AEApi;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.registry.GameRegistry;
 import ic2.api.item.IC2Items;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import remoteio.common.core.TransferType;
 import remoteio.common.core.UpgradeType;
 import remoteio.common.core.helper.ModHelper;
 import remoteio.common.core.helper.RecipeHelper;
-import remoteio.common.lib.DependencyInfo;
 import remoteio.common.lib.ModBlocks;
 import remoteio.common.lib.ModItems;
 
@@ -29,9 +27,9 @@ public class ModRecipes {
                 "SGS",
                 "GWG",
                 "SGS",
-                'S', Blocks.stone,
-                'G', Blocks.glass,
-                'W', Items.water_bucket
+                'S', Blocks.STONE,
+                'G', Blocks.GLASS,
+                'W', Items.WATER_BUCKET
         );
 
         // LAVA HEATER
@@ -40,9 +38,9 @@ public class ModRecipes {
                 "SIS",
                 "ILI",
                 "SIS",
-                'S', Blocks.stone,
-                'I', Blocks.iron_bars,
-                'L', Items.lava_bucket
+                'S', Blocks.STONE,
+                'I', Blocks.IRON_BARS,
+                'L', Items.LAVA_BUCKET
         );
 
         // REMOTE INTERFACE
@@ -51,9 +49,9 @@ public class ModRecipes {
                 " E ",
                 "RGR",
                 "RRR",
-                'E', Items.ender_pearl,
-                'R', Items.redstone,
-                'G', Blocks.gold_block
+                'E', Items.ENDER_PEARL,
+                'R', Items.REDSTONE,
+                'G', Blocks.GOLD_BLOCK
         );
 
         // LINKER
@@ -62,10 +60,10 @@ public class ModRecipes {
                 " G ",
                 "GEI",
                 " IR",
-                'G', Items.gold_ingot,
-                'E', Items.ender_pearl,
-                'I', Items.iron_ingot,
-                'R', Items.redstone
+                'G', Items.GOLD_INGOT,
+                'E', Items.ENDER_PEARL,
+                'I', Items.IRON_INGOT,
+                'R', Items.REDSTONE
         );
 
         // REMOTE ACCESSOR
@@ -86,15 +84,15 @@ public class ModRecipes {
                 "SGS",
                 "GRG",
                 "STS",
-                'S', Blocks.stone,
-                'G', Blocks.glass,
-                'R', Items.redstone
+                'S', Blocks.STONE,
+                'G', Blocks.GLASS,
+                'R', Items.REDSTONE
         );
 
         // INTELLIGENT WORKBENCH
         GameRegistry.addShapelessRecipe(
                 new ItemStack(ModBlocks.intelligentWorkbench),
-                Blocks.crafting_table,
+                Blocks.CRAFTING_TABLE,
                 ModItems.locationChip
         );
 
@@ -104,9 +102,9 @@ public class ModRecipes {
                 " I ",
                 "RSI",
                 "IR ",
-                'I', Items.iron_ingot,
-                'R', Items.redstone,
-                'S', Items.stick
+                'I', Items.IRON_INGOT,
+                'R', Items.REDSTONE,
+                'S', Items.STICK
         );
 
 /*        // Testing Recipe
@@ -125,10 +123,10 @@ public class ModRecipes {
                 "IGI",
                 "IRI",
                 "IBI",
-                'I', Items.iron_ingot,
-                'R', Items.redstone,
-                'G', Blocks.glass,
-                'B', Blocks.stone_button
+                'I', Items.IRON_INGOT,
+                'R', Items.REDSTONE,
+                'G', Blocks.GLASS,
+                'B', Blocks.STONE_BUTTON
         );
 
         // LOCATION CHIP
@@ -137,16 +135,16 @@ public class ModRecipes {
                 "R",
                 "P",
                 "G",
-                'R', Items.redstone,
-                'P', Items.paper,
-                'G', Items.gold_nugget
+                'R', Items.REDSTONE,
+                'P', Items.PAPER,
+                'G', Items.GOLD_NUGGET
         );
 
         // BLANK PLATE
         RecipeHelper.addOreRecipe(
                 new ItemStack(ModItems.blankPlate),
                 "III",
-                'I', Items.iron_ingot
+                'I', Items.IRON_INGOT
         );
 
         // WIRELESS TRANSMITTER
@@ -155,10 +153,10 @@ public class ModRecipes {
                 " E ",
                 "S  ",
                 "IRI",
-                'E', Items.ender_pearl,
-                'S', Items.stick,
-                'I', Items.iron_ingot,
-                'R', Items.redstone
+                'E', Items.ENDER_PEARL,
+                'S', Items.STICK,
+                'I', Items.IRON_INGOT,
+                'R', Items.REDSTONE
         );
 
         // TRANSFER TYPE - ITEM
@@ -167,7 +165,7 @@ public class ModRecipes {
                 " B ",
                 "ICI",
                 'B', ModItems.blankPlate,
-                'I', Blocks.chest,
+                'I', Blocks.CHEST,
                 'C', ModItems.locationChip
         );
 
@@ -177,7 +175,7 @@ public class ModRecipes {
                 " B ",
                 "ICI",
                 'B', ModItems.blankPlate,
-                'I', Items.bucket,
+                'I', Items.BUCKET,
                 'C', ModItems.locationChip
         );
 
@@ -212,12 +210,12 @@ public class ModRecipes {
                 " B ",
                 "ICI",
                 'B', ModItems.blankPlate,
-                'I', Items.redstone,
+                'I', Items.REDSTONE,
                 'C', ModItems.locationChip
         );
 
         // TRANSFER TYPE - AE2 NETWORK
-        if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
+        /*if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
             Object component = AEApi.instance().blocks().blockController.block();
             if (component == null) {
                 component = AEApi.instance().blocks().blockChest.block();
@@ -235,7 +233,7 @@ public class ModRecipes {
                         'C', ModItems.locationChip
                 );
             }
-        }
+        }*/
 
         // TRANSFER TYPE - REDSTONE
         RecipeHelper.addOreRecipe(
@@ -244,7 +242,7 @@ public class ModRecipes {
                 " C ",
                 " I ",
                 'B', ModItems.blankPlate,
-                'I', Blocks.redstone_block,
+                'I', Blocks.REDSTONE_BLOCK,
                 'C', ModItems.locationChip
         );
 
@@ -254,7 +252,7 @@ public class ModRecipes {
                 " B ",
                 "ICI",
                 'B', ModItems.blankPlate,
-                'I', Items.ender_pearl,
+                'I', Items.ENDER_PEARL,
                 'C', ModItems.locationChip
         );
 

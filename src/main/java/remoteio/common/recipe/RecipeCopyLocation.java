@@ -1,11 +1,12 @@
 package remoteio.common.recipe;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import remoteio.common.lib.ModItems;
 
 /**
@@ -81,5 +82,10 @@ public class RecipeCopyLocation implements IRecipe {
     @Override
     public ItemStack getRecipeOutput() {
         return new ItemStack(ModItems.locationChip);
+    }
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
 }

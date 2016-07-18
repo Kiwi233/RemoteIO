@@ -104,7 +104,7 @@ public class RemoteIO {
             if (map.name.startsWith("remoteio:")) {
                 String name = map.name.substring(map.name.indexOf(":") + 1);
                 if (map.type == GameRegistry.Type.BLOCK) {
-                    map.remap(GameRegistry.findBlock(ModInfo.ID, name));
+                    map.remap(Block.REGISTRY.getObject(new ResourceLocation(ModInfo.ID, name)));
                 } else if (map.type == GameRegistry.Type.ITEM) {
                     if (name.equalsIgnoreCase("remote_interface") || name.equalsIgnoreCase("remote_inventory")) {
                         map.remap(Item.getItemFromBlock(Block.REGISTRY.getObject(new ResourceLocation(ModInfo.ID, name))));

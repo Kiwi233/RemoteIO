@@ -3,6 +3,7 @@ package remoteio.common.network.packet;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -15,18 +16,16 @@ import remoteio.common.tile.TileTransceiver;
  */
 public class PacketServerSetChannel implements IMessage, IMessageHandler<PacketServerSetChannel, IMessage> {
 
-    public int x = 0;
-    public int y = 0;
-    public int z = 0;
+    public BlockPos pos = BlockPos.ORIGIN;
     public int channel = 0;
 
     @Override
     public void toBytes(ByteBuf buf) {
-        if (y > 0) {
+        if (pos.getY() > 0) {
             buf.writeBoolean(true);
-            buf.writeInt(x);
-            buf.writeInt(y);
-            buf.writeInt(z);
+            buf.writeInt(pos.getX());
+            buf.writeInt(pos.getY());
+            buf.writeInt(pos.getZ());
         } else {
             buf.writeBoolean(false);
         }
@@ -46,11 +45,11 @@ public class PacketServerSetChannel implements IMessage, IMessageHandler<PacketS
     @Override
     public IMessage onMessage(PacketServerSetChannel message, MessageContext ctx) {
         EntityPlayerMP entityPlayerMP = ctx.getServerHandler().playerEntity;
-        if (message.y > 0) {
-            TileTransceiver tileTransceiver = (TileTransceiver) entityPlayerMP.worldObj.getTileEntity(message.x, message.y, message.z);
+        if (message.pos.getY() > 0) {
+            TileTransceiver tileTransceiver = (TileTransceiver) entityPlayerMP.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
             tileTransceiver.setChannel(message.channel);
         } else {
-            ItemStack itemStack = entityPlayerMP.getCurrentEquippedItem();
+            ItemStack itemStack = entityPlayerMP.getHeldItemMainhand();
             if (itemStack != null && itemStack.getItem() == ModItems.wirelessLocationChip) {
                 ItemWirelessLocationChip.setChannel(itemStack, message.channel);
             }

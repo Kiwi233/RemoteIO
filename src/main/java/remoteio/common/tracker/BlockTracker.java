@@ -1,10 +1,10 @@
 package remoteio.common.tracker;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import remoteio.common.lib.DimensionalCoords;
 
 import java.util.HashSet;
@@ -58,7 +58,7 @@ public class BlockTracker {
                     } else {
                         Block block = trackedBlock.coordinates.getBlock();
 
-                        for (int i=0; i<6; i++) {
+                        for (int i = 0; i < 6; i++) {
                             int comparator = block.getComparatorInputOverride(trackedBlock.coordinates.getWorld(), trackedBlock.coordinates.x, trackedBlock.coordinates.y, trackedBlock.coordinates.z, i);
                             if (comparator != trackedBlock.lastComparatorValue) {
                                 trackedBlock.callback();
@@ -67,7 +67,7 @@ public class BlockTracker {
                             }
                         }
 
-                        for (int i=0; i<6; i++) {
+                        for (int i = 0; i < 6; i++) {
                             int redstone = block.isProvidingWeakPower(trackedBlock.coordinates.getWorld(), trackedBlock.coordinates.x, trackedBlock.coordinates.y, trackedBlock.coordinates.z, i);
                             if (redstone != trackedBlock.lastWeakRedstoneValue) {
                                 trackedBlock.callback();
@@ -75,7 +75,7 @@ public class BlockTracker {
                             }
                         }
 
-                        for (int i=0; i<6; i++) {
+                        for (int i = 0; i < 6; i++) {
                             int redstone = block.isProvidingStrongPower(trackedBlock.coordinates.getWorld(), trackedBlock.coordinates.x, trackedBlock.coordinates.y, trackedBlock.coordinates.z, i);
                             if (redstone != trackedBlock.lastStrongRedstoneValue) {
                                 trackedBlock.callback();
@@ -117,7 +117,7 @@ public class BlockTracker {
         }
     }
 
-    public static interface ITrackerCallback {
-        public void callback(IBlockAccess world, int x, int y, int z);
+    public interface ITrackerCallback {
+        void callback(IBlockAccess world, int x, int y, int z);
     }
 }

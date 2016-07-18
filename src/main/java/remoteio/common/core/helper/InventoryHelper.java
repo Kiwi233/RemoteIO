@@ -3,7 +3,7 @@ package remoteio.common.core.helper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -48,7 +48,7 @@ public class InventoryHelper {
         return false;
     }
 
-    public static void dropContents(IInventory inventory, World world, int x, int y, int z) {
+    public static void dropContents(IInventory inventory, World world, BlockPos pos) {
         for (int i = 0; i < inventory.getSizeInventory(); ++i) {
             ItemStack stack = inventory.getStackInSlot(i);
 
@@ -65,10 +65,10 @@ public class InventoryHelper {
                     }
 
                     stack.stackSize -= j1;
-                    EntityItem entityitem = new EntityItem(world, (double) ((float) x + f), (double) ((float) y + f1), (double) ((float) z + f2), new ItemStack(stack.getItem(), j1, stack.getItemDamage()));
+                    EntityItem entityitem = new EntityItem(world, (double) ((float) pos.getX() + f), (double) ((float) pos.getY() + f1), (double) ((float) pos.getZ() + f2), new ItemStack(stack.getItem(), j1, stack.getItemDamage()));
 
                     if (stack.hasTagCompound()) {
-                        entityitem.getEntityItem().setTagCompound((NBTTagCompound) stack.getTagCompound().copy());
+                        entityitem.getEntityItem().setTagCompound(stack.getTagCompound().copy());
                     }
 
                     float f3 = 0.05F;

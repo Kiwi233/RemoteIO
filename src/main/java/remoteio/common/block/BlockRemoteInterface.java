@@ -1,20 +1,19 @@
 package remoteio.common.block;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import remoteio.common.RemoteIO;
 import remoteio.common.block.core.BlockIOCore;
 import remoteio.common.core.TransferType;
@@ -26,6 +25,7 @@ import remoteio.common.lib.VisualState;
 import remoteio.common.tile.TileRemoteInterface;
 import remoteio.common.tile.core.TileIOCore;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,18 +37,18 @@ public class BlockRemoteInterface extends BlockIOCore {
     public static int renderID;
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
-        boolean result = super.onBlockActivated(world, x, y, z, player, side, fx, fy, fz);
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        boolean result = super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
 
         if (result) {
             return true;
         }
 
-        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(pos);
 
         if (tile.remotePosition != null && !player.isSneaking() && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
             DimensionalCoords there = tile.remotePosition;
-            RemoteIO.proxy.activateBlock(world, there.x, there.y, there.z, player, RotationHelper.getRotatedSide(0, tile.rotationY, 0, side), fx, fy, fz);
+            RemoteIO.proxy.activateBlock(world, there.pos, player, RotationHelper.getRotatedSide(0, tile.rotationY, 0, side), hitX, hitY, hitZ);
         }
 
         return true;
@@ -279,19 +279,6 @@ public class BlockRemoteInterface extends BlockIOCore {
     @Override
     public boolean canRenderInPass(int pass) {
         return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-        TileRemoteInterface tileRemoteInterface = (TileRemoteInterface) world.getTileEntity(x, y, z);
-        if (tileRemoteInterface.remotePosition != null && tileRemoteInterface.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) && tileRemoteInterface.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
-            Block block = tileRemoteInterface.remotePosition.getBlock();
-            if (block.getRenderType() == 0) {
-                return block.getIcon(world, tileRemoteInterface.remotePosition.x, tileRemoteInterface.remotePosition.y, tileRemoteInterface.remotePosition.z, RotationHelper.getRotatedSide(0, tileRemoteInterface.rotationY, 0, side));
-            }
-        }
-        return super.getIcon(world, x, y, z, side);
     }
 
     @Override

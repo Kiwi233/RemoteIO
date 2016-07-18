@@ -1,7 +1,7 @@
 package remoteio.common.lib;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import remoteio.common.block.*;
 import remoteio.common.block.item.ItemBlockRemoteInventory;
 import remoteio.common.item.block.ItemBlockMulti;

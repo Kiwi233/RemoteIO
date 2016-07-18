@@ -11,8 +11,7 @@ import java.util.Map;
 /**
  * @author dmillerw
  */
-public class ItemSelectiveMeta
-extends Item {
+public class ItemSelectiveMeta extends Item {
     protected final int[] values;
     protected Map<Integer, String> names;
 
@@ -24,7 +23,7 @@ extends Item {
         }
 
         this.values = values;
-        this.names = new HashMap<Integer, String>();
+        this.names = new HashMap<>();
 
         for (int i = 0; i < values.length; i++) {
             this.names.put(values[i], names[i]);
@@ -35,9 +34,9 @@ extends Item {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs tab, List list) {
+    public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems) {
         for (int i : values) {
-            list.add(new ItemStack(this, 1, i));
+            subItems.add(new ItemStack(this, 1, i));
         }
     }
 

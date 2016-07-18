@@ -4,7 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.Map;
 
@@ -27,6 +27,7 @@ public class TransferType {
     // MISC
     public static final int NETWORK_AE = 20;
     public static final int REDSTONE = 21;
+
     static {
         registerType(MATTER_ITEM, IInventory.class, ISidedInventory.class);
         registerType(MATTER_FLUID, IFluidHandler.class);
@@ -40,13 +41,13 @@ public class TransferType {
 
     public static void registerType(int type, Class... classes) {
         String[] names = new String[classes.length];
-        for (int i=0; i<classes.length; i++) {
+        for (int i = 0; i < classes.length; i++) {
             names[i] = classes[i].getName();
         }
         registerType(type, names);
     }
 
-    public static void registerType(int type, String ... classes) {
+    public static void registerType(int type, String... classes) {
         typeToInterfaceMap.put(type, classes);
     }
 

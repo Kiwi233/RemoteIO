@@ -1,23 +1,26 @@
 package remoteio.common.item;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import remoteio.common.RemoteIO;
 import remoteio.common.core.TabRemoteIO;
 import remoteio.common.core.handler.GuiHandler;
 import remoteio.common.lib.DimensionalCoords;
-import remoteio.common.lib.ModInfo;
 
 /**
  * @author dmillerw
  */
-public class ItemWirelessLocationChip
-extends Item {
+public class ItemWirelessLocationChip extends Item {
     public static int getChannel(ItemStack itemStack) {
         if (!itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
@@ -40,32 +43,30 @@ extends Item {
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer) {
-        if (entityPlayer.isSneaking()) {
-            entityPlayer.openGui(RemoteIO.instance, GuiHandler.GUI_SET_CHANNEL, world, 0, 0, 0);
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        if (player.isSneaking()) {
+            player.openGui(RemoteIO.instance, GuiHandler.GUI_SET_CHANNEL, world, 0, 0, 0);
         }
-        return itemStack;
+        return new ActionResult<>(EnumActionResult.PASS, stack);
     }
 
     @Override
-    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (!world.isRemote) {
             if (!player.isSneaking()) {
-                RemoteIO.channelRegistry.setChannelData(getChannel(stack), new DimensionalCoords(world.provider.dimensionId, x, y, z));
-                player.addChatComponentMessage(new ChatComponentTranslation("chat.target.save"));
+                RemoteIO.channelRegistry.setChannelData(getChannel(stack), new DimensionalCoords(world.provider.getDimension(), pos));
+                player.addChatComponentMessage(new TextComponentString("chat.target.save"));
             }
         }
 
-        return !world.isRemote;
+        if (!world.isRemote) {
+            return EnumActionResult.SUCCESS;
+        }
+        return EnumActionResult.PASS;
     }
 
     @Override
-    public void registerIcons(IIconRegister register) {
-        this.itemIcon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "chip");
-    }
-
-    @Override
-    public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
         return false;
     }
 }

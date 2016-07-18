@@ -1,8 +1,8 @@
 package remoteio.common.core.helper;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -24,7 +24,7 @@ public class MatrixHelper {
 
         matrix4f.store(buffer);
         buffer.flip();
-        GL11.glMultMatrix(buffer);
+        GlStateManager.glMultMatrix(buffer);
     }
 
     public static Matrix4f multiply(Matrix4f src, Matrix4f mod) {

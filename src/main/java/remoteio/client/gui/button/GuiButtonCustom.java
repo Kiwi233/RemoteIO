@@ -2,9 +2,9 @@ package remoteio.client.gui.button;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 /**
  * @author dmillerw
@@ -55,12 +55,12 @@ public class GuiButtonCustom extends GuiButton {
     @Override
     public void drawButton(Minecraft mc, int x, int y) {
         if (visible) {
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            this.field_146123_n = x >= offsetX + this.xPosition && y >= offsetY + this.yPosition && x < offsetX + this.xPosition + this.width && y < offsetY + this.yPosition + this.height;
-            int k = this.getHoverState(this.field_146123_n);
-            GL11.glEnable(GL11.GL_BLEND);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            this.hovered = x >= offsetX + this.xPosition && y >= offsetY + this.yPosition && x < offsetX + this.xPosition + this.width && y < offsetY + this.yPosition + this.height;
+            int k = this.getHoverState(this.hovered);
+            GlStateManager.enableBlend();
             OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
             Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
 
@@ -77,11 +77,11 @@ public class GuiButtonCustom extends GuiButton {
 
                 if (!this.enabled) {
                     l = 10526880;
-                } else if (this.field_146123_n) {
+                } else if (this.hovered) {
                     l = 16777120;
                 }
 
-                this.drawCenteredString(Minecraft.getMinecraft().fontRenderer, this.displayString, offsetX + this.xPosition + this.width / 2, offsetY + this.yPosition + (this.height - 8) / 2, l);
+                this.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, this.displayString, offsetX + this.xPosition + this.width / 2, offsetY + this.yPosition + (this.height - 8) / 2, l);
             }
         }
     }

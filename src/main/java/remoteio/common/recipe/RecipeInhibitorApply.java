@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import remoteio.common.lib.ModItems;
 
 /**
@@ -17,7 +18,7 @@ public class RecipeInhibitorApply implements IRecipe {
         int itemCount = 0;
         int inhibitorCount = 0;
 
-        for (int i=0; i<inventoryCrafting.getSizeInventory(); i++) {
+        for (int i = 0; i < inventoryCrafting.getSizeInventory(); i++) {
             ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
             if (itemStack != null) {
                 itemCount++;
@@ -36,7 +37,7 @@ public class RecipeInhibitorApply implements IRecipe {
         ItemStack inhibitor = null;
         ItemStack applyStack = null;
 
-        for (int i=0; i<inventoryCrafting.getSizeInventory(); i++) {
+        for (int i = 0; i < inventoryCrafting.getSizeInventory(); i++) {
             ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
             if (itemStack != null) {
                 if (itemStack.getItem() == ModItems.interactionInhibitor) {
@@ -66,5 +67,10 @@ public class RecipeInhibitorApply implements IRecipe {
     @Override
     public ItemStack getRecipeOutput() {
         return null;
+    }
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
 }
