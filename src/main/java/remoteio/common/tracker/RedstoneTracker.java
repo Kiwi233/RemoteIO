@@ -2,12 +2,12 @@ package remoteio.common.tracker;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import remoteio.common.core.TransferType;
-import remoteio.common.lib.DimensionalCoords;
-import remoteio.common.tile.TileRemoteInterface;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import remoteio.common.core.TransferType;
+import remoteio.common.lib.DimensionalCoords;
+import remoteio.common.tile.TileRemoteInterface;
 
 /**
  * @author dmillerw

@@ -1,13 +1,13 @@
 package remoteio.common.item;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import remoteio.common.RemoteIO;
-import remoteio.common.core.TabRemoteIO;
-import remoteio.common.core.handler.GuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import remoteio.common.RemoteIO;
+import remoteio.common.core.TabRemoteIO;
+import remoteio.common.core.handler.GuiHandler;
 import remoteio.common.lib.ModInfo;
 
 /**

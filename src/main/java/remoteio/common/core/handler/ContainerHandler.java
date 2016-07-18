@@ -1,11 +1,10 @@
 package remoteio.common.core.handler;
 
+import com.google.common.collect.Maps;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.inventory.Container;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
-
-import com.google.common.collect.Maps;
 
 import java.util.Map;
 

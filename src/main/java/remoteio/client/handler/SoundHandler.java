@@ -1,8 +1,10 @@
 package remoteio.client.handler;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraftforge.client.event.sound.PlaySoundEvent17;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * @author dmillerw
@@ -10,23 +12,20 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 public class SoundHandler {
     public static final SoundHandler INSTANCE = new SoundHandler();
 
-    public int x;
-    public int y;
-    public int z;
+    public BlockPos pos;
 
     private boolean translate = false;
 
-    public void translateNextSound(int x, int y, int z) {
+    public void translateNextSound(BlockPos pos) {
         translate = true;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
     }
 
     @SubscribeEvent
-    public void onSoundPlayed(PlaySoundEvent17 event) {
+    public void onSoundPlayed(PlaySoundEvent event) {
         if (translate) {
-            event.result = new PositionedSoundRecord(event.sound.getPositionedSoundLocation(), event.sound.getVolume(), event.sound.getPitch(), x, y, z);
+            ISound sound = event.getSound();
+            event.getResultSound() = new PositionedSoundRecord(sound.getSoundLocation(), sound.getCategory(), sound.getVolume(), sound.getPitch(), sound.canRepeat(), sound.getRepeatDelay(), sound.getAttenuationType(), sound.getXPosF(), sound.getYPosF(), sound.getZPosF()).getSound();
             translate = false;
         }
     }

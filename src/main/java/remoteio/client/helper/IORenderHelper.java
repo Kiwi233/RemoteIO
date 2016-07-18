@@ -1,51 +1,54 @@
 package remoteio.client.helper;
 
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 /**
  * @author dmillerw
  */
 public class IORenderHelper {
-    public static void renderCube(IIcon icon) {
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
+    public static void renderCube(TextureAtlasSprite icon) {
+        Tessellator tessellator = Tessellator.getInstance();
+        VertexBuffer vertexbuffer = tessellator.getBuffer();
+        vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
 
         // TOP
-        tessellator.addVertexWithUV(0, 1.001, 0, icon.getMinU(), icon.getMinV());
-        tessellator.addVertexWithUV(0, 1.001, 1, icon.getMinU(), icon.getMaxV());
-        tessellator.addVertexWithUV(1, 1.001, 1, icon.getMaxU(), icon.getMaxV());
-        tessellator.addVertexWithUV(1, 1.001, 0, icon.getMaxU(), icon.getMinV());
+        vertexbuffer.pos(0, 1.001, 0).tex(icon.getMinU(), icon.getMinV()).endVertex();
+        vertexbuffer.pos(0, 1.001, 1).tex(icon.getMinU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(1, 1.001, 1).tex(icon.getMaxU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(1, 1.001, 0).tex(icon.getMaxU(), icon.getMinV()).endVertex();
 
         // BOTTOM
-        tessellator.addVertexWithUV(1, -0.001, 0, icon.getMaxU(), icon.getMinV());
-        tessellator.addVertexWithUV(1, -0.001, 1, icon.getMaxU(), icon.getMaxV());
-        tessellator.addVertexWithUV(0, -0.001, 1, icon.getMinU(), icon.getMaxV());
-        tessellator.addVertexWithUV(0, -0.001, 0, icon.getMinU(), icon.getMinV());
+        vertexbuffer.pos(1, -0.001, 0).tex(icon.getMaxU(), icon.getMinV()).endVertex();
+        vertexbuffer.pos(1, -0.001, 1).tex(icon.getMaxU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(0, -0.001, 1).tex(icon.getMinU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(0, -0.001, 0).tex(icon.getMinU(), icon.getMinV()).endVertex();
 
         // NORTH
-        tessellator.addVertexWithUV(0, 1, -0.001, icon.getMaxU(), icon.getMinV());
-        tessellator.addVertexWithUV(1, 1, -0.001, icon.getMaxU(), icon.getMaxV());
-        tessellator.addVertexWithUV(1, 0, -0.001, icon.getMinU(), icon.getMaxV());
-        tessellator.addVertexWithUV(0, 0, -0.001, icon.getMinU(), icon.getMinV());
+        vertexbuffer.pos(0, 1, -0.001).tex(icon.getMaxU(), icon.getMinV()).endVertex();
+        vertexbuffer.pos(1, 1, -0.001).tex(icon.getMaxU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(1, 0, -0.001).tex(icon.getMinU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(0, 0, -0.001).tex(icon.getMinU(), icon.getMinV()).endVertex();
 
         // SOUTH
-        tessellator.addVertexWithUV(0, 0, 1.001, icon.getMinU(), icon.getMinV());
-        tessellator.addVertexWithUV(1, 0, 1.001, icon.getMinU(), icon.getMaxV());
-        tessellator.addVertexWithUV(1, 1, 1.001, icon.getMaxU(), icon.getMaxV());
-        tessellator.addVertexWithUV(0, 1, 1.001, icon.getMaxU(), icon.getMinV());
+        vertexbuffer.pos(0, 0, 1.001).tex(icon.getMinU(), icon.getMinV()).endVertex();
+        vertexbuffer.pos(1, 0, 1.001).tex(icon.getMinU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(1, 1, 1.001).tex(icon.getMaxU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(0, 1, 1.001).tex(icon.getMaxU(), icon.getMinV()).endVertex();
 
         // EAST
-        tessellator.addVertexWithUV(1.001, 1, 0, icon.getMaxU(), icon.getMinV());
-        tessellator.addVertexWithUV(1.001, 1, 1, icon.getMaxU(), icon.getMaxV());
-        tessellator.addVertexWithUV(1.001, 0, 1, icon.getMinU(), icon.getMaxV());
-        tessellator.addVertexWithUV(1.001, 0, 0, icon.getMinU(), icon.getMinV());
+        vertexbuffer.pos(1.001, 1, 0).tex(icon.getMaxU(), icon.getMinV()).endVertex();
+        vertexbuffer.pos(1.001, 1, 1).tex(icon.getMaxU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(1.001, 0, 1).tex(icon.getMinU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(1.001, 0, 0).tex(icon.getMinU(), icon.getMinV()).endVertex();
 
         // WEST
-        tessellator.addVertexWithUV(-0.001, 0, 0, icon.getMinU(), icon.getMinV());
-        tessellator.addVertexWithUV(-0.001, 0, 1, icon.getMinU(), icon.getMaxV());
-        tessellator.addVertexWithUV(-0.001, 1, 1, icon.getMaxU(), icon.getMaxV());
-        tessellator.addVertexWithUV(-0.001, 1, 0, icon.getMaxU(), icon.getMinV());
+        vertexbuffer.pos(-0.001, 0, 0).tex(icon.getMinU(), icon.getMinV()).endVertex();
+        vertexbuffer.pos(-0.001, 0, 1).tex(icon.getMinU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(-0.001, 1, 1).tex(icon.getMaxU(), icon.getMaxV()).endVertex();
+        vertexbuffer.pos(-0.001, 1, 0).tex(icon.getMaxU(), icon.getMinV()).endVertex();
 
         tessellator.draw();
     }

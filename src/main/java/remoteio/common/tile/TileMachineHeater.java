@@ -1,8 +1,5 @@
 package remoteio.common.tile;
 
-import cpw.mods.fml.common.Optional;
-import remoteio.common.lib.DependencyInfo;
-import remoteio.common.tile.core.TileCore;
 import ic2.api.energy.tile.IHeatSource;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
@@ -11,6 +8,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.common.Optional;
+import remoteio.common.lib.DependencyInfo;
+import remoteio.common.tile.core.TileCore;
 
 /**
  * @author dmillerw

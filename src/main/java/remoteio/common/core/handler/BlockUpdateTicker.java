@@ -4,12 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import remoteio.common.block.BlockSkylight;
-import remoteio.common.lib.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import remoteio.common.block.BlockSkylight;
+import remoteio.common.lib.ModBlocks;
 
 import java.util.List;
 import java.util.Set;

@@ -1,6 +1,6 @@
 package remoteio.common.core.helper;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 /**
  * @author dmillerw
@@ -8,7 +8,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class RotationHelper {
 
     public static int getRotatedSide(int rotationX, int rotationY, int rotationZ, int side) {
-        ForgeDirection forgeDirection = ForgeDirection.getOrientation(side);
+        EnumFacing forgeDirection = EnumFacing.getOrientation(side);
 
         if (rotationX > 0) {
             for (int i = 0; i < rotationX; i++) {

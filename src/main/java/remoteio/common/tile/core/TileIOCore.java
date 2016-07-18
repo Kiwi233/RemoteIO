@@ -1,13 +1,13 @@
 package remoteio.common.tile.core;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import remoteio.common.core.UpgradeType;
 import remoteio.common.core.helper.InventoryHelper;
 import remoteio.common.inventory.InventoryItem;
 import remoteio.common.inventory.InventoryNBT;
 import remoteio.common.lib.ModItems;
 import remoteio.common.lib.VisualState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * @author dmillerw
@@ -21,7 +21,7 @@ public abstract class TileIOCore extends TileCore implements InventoryNBT.IInven
     public InventoryNBT upgradeChips = new InventoryNBT(this, 9, 1);
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
 
         transferChips.writeToNBT("TransferChips", nbt);
@@ -34,6 +34,7 @@ public abstract class TileIOCore extends TileCore implements InventoryNBT.IInven
         }
 
         nbt.setByte("state", (byte) visualState.ordinal());
+        return nbt;
     }
 
     @Override

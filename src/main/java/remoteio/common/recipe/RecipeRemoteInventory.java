@@ -2,9 +2,6 @@ package remoteio.common.recipe;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
-import remoteio.common.item.ItemWirelessTransmitter;
-import remoteio.common.lib.ModBlocks;
-import remoteio.common.lib.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -12,6 +9,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import remoteio.common.item.ItemWirelessTransmitter;
+import remoteio.common.lib.ModBlocks;
+import remoteio.common.lib.ModItems;
 
 /**
  * @author dmillerw

@@ -1,7 +1,5 @@
 package remoteio.client.gui;
 
-import remoteio.client.gui.button.GuiBetterButton;
-import remoteio.common.inventory.container.ContainerIntelligentWorkbench;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
@@ -9,6 +7,8 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
+import remoteio.client.gui.button.GuiBetterButton;
+import remoteio.common.inventory.container.ContainerIntelligentWorkbench;
 
 /**
  * @author dmillerw

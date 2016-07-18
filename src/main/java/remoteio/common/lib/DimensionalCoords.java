@@ -1,11 +1,11 @@
 package remoteio.common.lib;
 
-import remoteio.common.RemoteIO;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import remoteio.common.RemoteIO;
 
 /**
  * @author dmillerw

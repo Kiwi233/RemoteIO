@@ -1,7 +1,7 @@
 package remoteio.core.mapping;
 
-import remoteio.core.MappingHelper;
 import org.objectweb.asm.tree.MethodNode;
+import remoteio.core.MappingHelper;
 
 /**
  * @author dmillerw

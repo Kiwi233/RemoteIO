@@ -1,11 +1,10 @@
 package remoteio.common.tile.core;
 
-import remoteio.common.network.VanillaPacketHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import remoteio.common.network.VanillaPacketHelper;
 
 /**
  * @author dmillerw
@@ -23,9 +22,10 @@ public abstract class TileCore extends TileEntity {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         writeCustomNBT(nbt);
+        return nbt;
     }
 
     @Override
@@ -34,51 +34,50 @@ public abstract class TileCore extends TileEntity {
         readCustomNBT(nbt);
     }
 
-    @Override
-    public Packet getDescriptionPacket() {
-        NBTTagCompound tag = new NBTTagCompound();
-        writeToNBT(tag);
-        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, tag);
-    }
-
     public void markForUpdate() {
         if (hasWorldObj()) {
-            getWorldObj().markBlockForUpdate(xCoord, yCoord, zCoord);
+            getWorld().markBlockForUpdate(pos.getX(), pos.getY(), pos.getZ());
         }
     }
 
     public void markForRenderUpdate() {
         if (hasWorldObj()) {
-            getWorldObj().markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+            getWorld().markBlockRangeForRenderUpdate(pos, pos);
         }
     }
 
     public void updateNeighbors() {
         if (hasWorldObj()) {
-            getWorldObj().notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+            getWorld().notifyBlockOfStateChange(pos, getBlockType());
         }
     }
 
-    public void sendNBTUpdate() {
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-    }
-
     public void sendClientUpdate(NBTTagCompound tag) {
-        VanillaPacketHelper.sendToAllWatchingTile(this, new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tag));
+        VanillaPacketHelper.sendToAllWatchingTile(this, new SPacketUpdateTileEntity(pos, 1, tag));
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
-        switch (pkt.func_148853_f()) {
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        return new SPacketUpdateTileEntity(pos, 1, getUpdateTag());
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+        switch (packet.getTileEntityType()) {
             case 0:
-                readFromNBT(pkt.func_148857_g());
+                readFromNBT(packet.getNbtCompound());
                 break;
             case 1:
-                onClientUpdate(pkt.func_148857_g());
+                onClientUpdate(packet.getNbtCompound());
                 break;
             default:
                 break;
         }
-        worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        worldObj.markBlockRangeForRenderUpdate(pos, pos);
+    }
+
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        return writeToNBT(new NBTTagCompound());
     }
 }

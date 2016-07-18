@@ -1,16 +1,16 @@
 package remoteio.common.block;
 
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.world.World;
 import remoteio.common.block.core.BlockIOCore;
 import remoteio.common.core.handler.GuiHandler;
 import remoteio.common.item.ItemWirelessTransmitter;
 import remoteio.common.lib.ModItems;
 import remoteio.common.tile.TileRemoteInventory;
 import remoteio.common.tile.core.TileIOCore;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.world.World;
 
 /**
  * @author dmillerw

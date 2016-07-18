@@ -1,12 +1,5 @@
 package remoteio.common.item;
 
-import remoteio.common.RemoteIO;
-import remoteio.common.core.TabRemoteIO;
-import remoteio.common.core.UpgradeType;
-import remoteio.common.core.handler.GuiHandler;
-import remoteio.common.lib.ModInfo;
-import remoteio.common.tile.TileRemoteInterface;
-import remoteio.common.tile.core.TileIOCore;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -15,6 +8,13 @@ import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import remoteio.common.RemoteIO;
+import remoteio.common.core.TabRemoteIO;
+import remoteio.common.core.UpgradeType;
+import remoteio.common.core.handler.GuiHandler;
+import remoteio.common.lib.ModInfo;
+import remoteio.common.tile.TileRemoteInterface;
+import remoteio.common.tile.core.TileIOCore;
 
 /**
  * @author dmillerw

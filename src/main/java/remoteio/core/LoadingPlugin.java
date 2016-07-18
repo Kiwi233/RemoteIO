@@ -1,6 +1,6 @@
 package remoteio.core;
 
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 import java.util.Map;
 
@@ -11,7 +11,7 @@ public class LoadingPlugin implements IFMLLoadingPlugin {
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[] {"remoteio.core.transform.CoreTransformer"};
+        return new String[]{"remoteio.core.transform.CoreTransformer"};
     }
 
     @Override
@@ -26,7 +26,7 @@ public class LoadingPlugin implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
-        MappingHelper.obfuscated = ((Boolean)data.get("runtimeDeobfuscationEnabled"));
+        MappingHelper.obfuscated = ((Boolean) data.get("runtimeDeobfuscationEnabled"));
     }
 
     @Override

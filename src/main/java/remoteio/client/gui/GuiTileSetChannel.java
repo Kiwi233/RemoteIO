@@ -1,11 +1,5 @@
 package remoteio.client.gui;
 
-import remoteio.client.gui.button.GuiBetterButton;
-import remoteio.common.inventory.container.ContainerNull;
-import remoteio.common.lib.ModInfo;
-import remoteio.common.network.PacketHandler;
-import remoteio.common.network.packet.PacketServerSetChannel;
-import remoteio.common.tile.TileTransceiver;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -15,6 +9,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
+import remoteio.client.gui.button.GuiBetterButton;
+import remoteio.common.inventory.container.ContainerNull;
+import remoteio.common.lib.ModInfo;
+import remoteio.common.network.PacketHandler;
+import remoteio.common.network.packet.PacketServerSetChannel;
+import remoteio.common.tile.TileTransceiver;
 
 /**
  * @author dmillerw

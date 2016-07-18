@@ -1,12 +1,12 @@
 package remoteio.core.transform;
 
-import remoteio.core.MappingHelper;
-import remoteio.core.mapping.MappingConstants;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
+import remoteio.core.MappingHelper;
+import remoteio.core.mapping.MappingConstants;
 
 /**
  * @author dmillerw

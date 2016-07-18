@@ -1,12 +1,6 @@
 package remoteio.client.render;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLLog;
-import remoteio.common.block.core.BlockIOCore;
-import remoteio.client.helper.IORenderHelper;
-import remoteio.common.lib.DimensionalCoords;
-import remoteio.common.lib.VisualState;
-import remoteio.common.tile.TileRemoteInterface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -17,7 +11,13 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 import org.lwjgl.opengl.GL11;
+import remoteio.client.helper.IORenderHelper;
+import remoteio.common.block.core.BlockIOCore;
+import remoteio.common.lib.DimensionalCoords;
+import remoteio.common.lib.VisualState;
+import remoteio.common.tile.TileRemoteInterface;
 
 /**
  * @author dmillerw
@@ -66,7 +66,7 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glTranslated(x, y, z);
 
-                bindTexture(TextureMap.locationBlocksTexture);
+                bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
                 char c0 = 61680;
                 int j = c0 % 65536;

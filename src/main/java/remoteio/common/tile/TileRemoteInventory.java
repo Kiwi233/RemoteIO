@@ -1,7 +1,15 @@
 package remoteio.common.tile;
 
 import cofh.api.energy.IEnergyHandler;
-import cpw.mods.fml.common.Optional;
+import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.tile.IEnergySource;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.common.Optional;
 import remoteio.common.core.TransferType;
 import remoteio.common.core.UpgradeType;
 import remoteio.common.core.helper.PlayerHelper;
@@ -13,14 +21,6 @@ import remoteio.common.item.ItemWirelessTransmitter;
 import remoteio.common.lib.DependencyInfo;
 import remoteio.common.lib.VisualState;
 import remoteio.common.tile.core.TileIOCore;
-import ic2.api.energy.tile.IEnergySink;
-import ic2.api.energy.tile.IEnergySource;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * @author dmillerw

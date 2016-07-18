@@ -1,13 +1,13 @@
 package remoteio.common.core.helper.mod;
 
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Optional;
-import remoteio.common.lib.DependencyInfo;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergyTile;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional;
+import remoteio.common.lib.DependencyInfo;
 
 /**
  * @author dmillerw

@@ -1,7 +1,5 @@
 package remoteio.common.item;
 
-import remoteio.common.core.TabRemoteIO;
-import remoteio.common.lib.ModInfo;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,6 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import remoteio.common.core.TabRemoteIO;
+import remoteio.common.lib.ModInfo;
 
 import java.util.List;
 

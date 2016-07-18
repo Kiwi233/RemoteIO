@@ -1,14 +1,14 @@
 package remoteio.common.inventory.container.core;
 
-import remoteio.common.inventory.container.slot.SlotLimited;
-import remoteio.common.item.ItemTransferChip;
-import remoteio.common.item.ItemUpgradeChip;
-import remoteio.common.tile.core.TileIOCore;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import remoteio.common.inventory.container.slot.SlotLimited;
+import remoteio.common.item.ItemTransferChip;
+import remoteio.common.item.ItemUpgradeChip;
+import remoteio.common.tile.core.TileIOCore;
 
 /**
  * @author dmillerw

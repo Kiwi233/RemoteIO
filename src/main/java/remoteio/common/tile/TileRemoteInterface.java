@@ -1,40 +1,33 @@
 package remoteio.common.tile;
 
-import appeng.api.networking.GridFlags;
-import appeng.api.networking.GridNotification;
-import appeng.api.networking.IGrid;
-import appeng.api.networking.IGridBlock;
-import appeng.api.networking.IGridHost;
-import appeng.api.networking.IGridNode;
-import appeng.api.util.AECableType;
-import appeng.api.util.AEColor;
-import appeng.api.util.DimensionalCoord;
 import cofh.api.energy.IEnergyHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModAPIManager;
-import cpw.mods.fml.common.Optional;
 import ic2.api.energy.tile.IEnergyAcceptor;
+import ic2.api.energy.tile.IEnergyEmitter;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import ic2.api.tile.IEnergyStorage;
 import ic2.api.tile.IWrenchable;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.common.ModAPIManager;
+import net.minecraftforge.fml.common.Optional;
 import remoteio.common.core.TransferType;
 import remoteio.common.core.UpgradeType;
-import remoteio.common.core.compat.LinkedGridNode;
 import remoteio.common.core.helper.RotationHelper;
 import remoteio.common.core.helper.mod.IC2Helper;
 import remoteio.common.lib.DependencyInfo;
@@ -44,21 +37,17 @@ import remoteio.common.lib.VisualState;
 import remoteio.common.tile.core.TileIOCore;
 import remoteio.common.tracker.BlockTracker;
 import remoteio.common.tracker.RedstoneTracker;
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
-import thaumcraft.api.aspects.IAspectSource;
-import thaumcraft.api.aspects.IEssentiaTransport;
-import thaumcraft.api.wands.IWandable;
 
-import java.util.EnumSet;
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * @author dmillerw
  */
 @Optional.InterfaceList({
-        @Optional.Interface(iface = DependencyInfo.Paths.Thaumcraft.IASPECTCONTAINER, modid = DependencyInfo.ModIds.THAUMCRAFT),
-        @Optional.Interface(iface = DependencyInfo.Paths.Thaumcraft.IASPECTSOURCE, modid = DependencyInfo.ModIds.THAUMCRAFT),
-        @Optional.Interface(iface = DependencyInfo.Paths.Thaumcraft.IESSENTIATRANSPORT, modid = DependencyInfo.ModIds.THAUMCRAFT),
+        //@Optional.Interface(iface = DependencyInfo.Paths.Thaumcraft.IASPECTCONTAINER, modid = DependencyInfo.ModIds.THAUMCRAFT),
+        //@Optional.Interface(iface = DependencyInfo.Paths.Thaumcraft.IASPECTSOURCE, modid = DependencyInfo.ModIds.THAUMCRAFT),
+        //@Optional.Interface(iface = DependencyInfo.Paths.Thaumcraft.IESSENTIATRANSPORT, modid = DependencyInfo.ModIds.THAUMCRAFT),
         @Optional.Interface(iface = DependencyInfo.Paths.IC2.IENERGYSOURCE, modid = DependencyInfo.ModIds.IC2),
         @Optional.Interface(iface = DependencyInfo.Paths.IC2.IENERGYEMITTER, modid = DependencyInfo.ModIds.IC2),
         @Optional.Interface(iface = DependencyInfo.Paths.IC2.IENERGYSINK, modid = DependencyInfo.ModIds.IC2),
@@ -66,26 +55,29 @@ import java.util.EnumSet;
         @Optional.Interface(iface = DependencyInfo.Paths.IC2.IENERGYTILE, modid = DependencyInfo.ModIds.IC2),
         @Optional.Interface(iface = DependencyInfo.Paths.IC2.IENERGYSTORAGE, modid = DependencyInfo.ModIds.IC2),
         @Optional.Interface(iface = DependencyInfo.Paths.COFH.IENERGYHANDLER, modid = DependencyInfo.ModIds.COFH_API),
-        @Optional.Interface(iface = DependencyInfo.Paths.AE2.IGRIDHOST, modid = DependencyInfo.ModIds.AE2),
-        @Optional.Interface(iface = DependencyInfo.Paths.AE2.IGRIDBLOCK, modid = DependencyInfo.ModIds.AE2),
-        @Optional.Interface(iface = DependencyInfo.Paths.Thaumcraft.IWANDABLE, modid = DependencyInfo.ModIds.THAUMCRAFT),
+        //@Optional.Interface(iface = DependencyInfo.Paths.AE2.IGRIDHOST, modid = DependencyInfo.ModIds.AE2),
+        //@Optional.Interface(iface = DependencyInfo.Paths.AE2.IGRIDBLOCK, modid = DependencyInfo.ModIds.AE2),
+        //@Optional.Interface(iface = DependencyInfo.Paths.Thaumcraft.IWANDABLE, modid = DependencyInfo.ModIds.THAUMCRAFT),
         @Optional.Interface(iface = DependencyInfo.Paths.IC2.IWRENCHABLE, modid = DependencyInfo.ModIds.IC2)
 })
 public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback,
         IInventory,
         ISidedInventory,
         IFluidHandler,
-        IAspectSource, // THAUMCRAFT
-        IEssentiaTransport, // THAUMCRAFT
+        ITickable,
+        //IAspectSource, // THAUMCRAFT
+        //IEssentiaTransport, // THAUMCRAFT
         IEnergySource, // IC2
         IEnergySink, // IC2
         IEnergyStorage, // IC2
         IEnergyHandler, // COFH
-        IGridHost, // AE2
-        IGridBlock, //AE2
-        IWandable, // THAUMCRAFT
+        cofh.api.energy.IEnergyStorage, // COFH
+        //IGridHost, // AE2
+        //IGridBlock, //AE2
+        //IWandable, // THAUMCRAFT
         IWrenchable // IC2
-{
+{ //TODO Cleanup
+
     @Override
     public void callback(IBlockAccess world, int x, int y, int z) {
         updateVisualState();
@@ -94,7 +86,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
     @Override
     public void callback(IInventory inventory) {
-        if (!hasWorldObj() || getWorldObj().isRemote) {
+        if (!hasWorldObj() || getWorld().isRemote) {
             return;
         }
 
@@ -125,7 +117,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
     public DimensionalCoords remotePosition;
 
-    private LinkedGridNode aeGridNode;
+    //private LinkedGridNode aeGridNode;
 
     // THIS IS NOT AN ANGLE, BUT THE NUMBER OF LEFT-HAND ROTATIONS!
     public int rotationY = 0;
@@ -179,10 +171,10 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     }
 
     @Override
-    public void updateEntity() {
+    public void update() {
         if (!worldObj.isRemote) {
             if (!tracking) {
-                if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
+                /*if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
                     if (remotePosition != null && remotePosition.getTileEntity() != this && hasTransferChip(TransferType.NETWORK_AE)) {
                         if (remotePosition.getTileEntity() instanceof IGridHost) {
                             aeGridNode = new LinkedGridNode(((IGridHost) remotePosition.getTileEntity()).getGridNode(ForgeDirection.UNKNOWN), this);
@@ -198,7 +190,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
                                 gridNode.updateState();
                         }
                     }
-                }
+                }*/
 
                 BlockTracker.INSTANCE.startTracking(remotePosition, this);
                 tracking = true;
@@ -262,12 +254,12 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     public void onChunkUnload() {
        IC2Helper.unloadEnergyTile(this);
 
-        if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
+        /*if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
             if (aeGridNode != null) {
                 aeGridNode.destroy();
                 aeGridNode.updateState();
             }
-        }
+        }*/
 
         RedstoneTracker.unregister(this);
         BlockTracker.INSTANCE.stopTracking(remotePosition);
@@ -277,12 +269,12 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     public void invalidate() {
         IC2Helper.unloadEnergyTile(this);
 
-        if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
+        /*if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
             if (aeGridNode != null) {
                 aeGridNode.destroy();
                 aeGridNode.updateState();
             }
-        }
+        }*/
 
         RedstoneTracker.unregister(this);
         BlockTracker.INSTANCE.stopTracking(remotePosition);
@@ -374,12 +366,12 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     public void setRemotePosition(DimensionalCoords coords) {
         IC2Helper.unloadEnergyTile(this);
 
-        if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
+        /*if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
             if (aeGridNode != null) {
                 aeGridNode.destroy();
                 aeGridNode.updateState();
             }
-        }
+        }*/
 
         RedstoneTracker.unregister(this);
         BlockTracker.INSTANCE.stopTracking(remotePosition);
@@ -389,7 +381,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
         IC2Helper.loadEnergyTile(this);
 
-        if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
+        /*if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
             if (remotePosition != null && remotePosition.getTileEntity() != this && hasTransferChip(TransferType.NETWORK_AE)) {
                 if (remotePosition.getTileEntity() instanceof IGridHost) {
                     aeGridNode = new LinkedGridNode(((IGridHost) remotePosition.getTileEntity()).getGridNode(ForgeDirection.UNKNOWN), this);
@@ -405,9 +397,9 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
                         gridNode.updateState();
                 }
             }
-        }
+        }*/
 
-        worldObj.notifyBlockOfNeighborChange(xCoord, yCoord, zCoord, this.getBlockType());
+        worldObj.notifyBlockOfStateChange(pos, this.getBlockType());
         markForUpdate();
     }
 
@@ -485,8 +477,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
         return cls.cast(remote);
     }
 
-    public ForgeDirection getAdjustedSide(ForgeDirection side) {
-        return side;
+    public EnumFacing getAdjustedSide(EnumFacing facing) {
+        return facing;
 //        return ForgeDirection.getOrientation(RotationHelper.getRotatedSide(0, rotationY, 0, side.ordinal()));
     }
 
@@ -516,9 +508,9 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
+    public ItemStack removeStackFromSlot(int index) {
         IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
-        return inventory != null ? inventory.getStackInSlotOnClosing(slot) : null;
+        return inventory != null ? inventory.removeStackFromSlot(index) : null;
     }
 
     @Override
@@ -528,15 +520,15 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     }
 
     @Override
-    public String getInventoryName() {
+    public String getName() {
         IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
-        return inventory != null ? inventory.getInventoryName() : null;
+        return inventory != null ? inventory.getName() : null;
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
-        return inventory != null && inventory.hasCustomInventoryName();
+        return inventory != null && inventory.hasCustomName();
     }
 
     @Override
@@ -552,27 +544,44 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     }
 
     @Override
-    public void openInventory() {
-
+    public void openInventory(EntityPlayer player) {
     }
 
     @Override
-    public void closeInventory() {
-
+    public void closeInventory(EntityPlayer player) {
     }
 
     @Override
-    public boolean isItemValidForSlot(int slot, ItemStack stack) {
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
         IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
-        return inventory != null && inventory.isItemValidForSlot(slot, stack);
+        return inventory != null && inventory.isItemValidForSlot(index, stack);
+    }
+
+    @Override
+    public int getField(int id) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+
     }
 
     /* ISIDEDINVENTORY */
     @Override
-    public int[] getAccessibleSlotsFromSide(int side) {
+    public int[] getSlotsForFace(EnumFacing side) {
         ISidedInventory sidedInventory = (ISidedInventory) getTransferImplementation(ISidedInventory.class);
         if (sidedInventory != null) {
-            return sidedInventory.getAccessibleSlotsFromSide(getAdjustedSide(side));
+            return sidedInventory.getSlotsForFace(getAdjustedSide(side));
         } else {
             IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
             if (inventory != null) {
@@ -587,25 +596,25 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     }
 
     @Override
-    public boolean canInsertItem(int slot, ItemStack stack, int side) {
+    public boolean canInsertItem(int index, ItemStack stack, EnumFacing direction) {
         ISidedInventory sidedInventory = (ISidedInventory) getTransferImplementation(ISidedInventory.class);
         if (sidedInventory != null) {
-            return sidedInventory.canInsertItem(slot, stack, getAdjustedSide(side));
+            return sidedInventory.canInsertItem(index, stack, getAdjustedSide(direction));
         } else {
             IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 
             if (inventory != null) {
-                return inventory.isItemValidForSlot(slot, stack);
+                return inventory.isItemValidForSlot(index, stack);
             }
         }
         return false;
     }
 
     @Override
-    public boolean canExtractItem(int slot, ItemStack stack, int side) {
+    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
         ISidedInventory sidedInventory = (ISidedInventory) getTransferImplementation(ISidedInventory.class);
         if (sidedInventory != null) {
-            return sidedInventory.canExtractItem(slot, stack, getAdjustedSide(side));
+            return sidedInventory.canExtractItem(index, stack, getAdjustedSide(direction));
         } else {
             IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 
@@ -618,24 +627,26 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
     /* IFLUIDHANDLER */
     @Override
-    public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+    public int fill(FluidStack resource, boolean doFill) {
         IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
         return fluidHandler != null ? fluidHandler.fill(getAdjustedSide(from), resource, doFill) : 0;
     }
 
     @Override
-    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+    @Nullable
+    public FluidStack drain(FluidStack resource, boolean doDrain) {
         IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
         return fluidHandler != null ? fluidHandler.drain(getAdjustedSide(from), resource, doDrain) : null;
     }
 
     @Override
-    public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+    @Nullable
+    public FluidStack drain(int maxDrain, boolean doDrain) {
         IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
         return fluidHandler != null ? fluidHandler.drain(getAdjustedSide(from), maxDrain, doDrain) : null;
     }
 
-    @Override
+    /*@Override
     public boolean canFill(ForgeDirection from, Fluid fluid) {
         IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
         return fluidHandler != null && fluidHandler.canFill(getAdjustedSide(from), fluid);
@@ -645,16 +656,16 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     public boolean canDrain(ForgeDirection from, Fluid fluid) {
         IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
         return fluidHandler != null && fluidHandler.canDrain(getAdjustedSide(from), fluid);
-    }
+    }*/
 
     @Override
-    public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+    public IFluidTankProperties[] getTankProperties() {
         IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
         return fluidHandler != null ? fluidHandler.getTankInfo(getAdjustedSide(from)) : new FluidTankInfo[0];
     }
 
     /* IASPECTSOURCE */
-    @Override
+/*    @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public AspectList getAspects() {
         IAspectSource aspectContainer = (IAspectSource) getTransferImplementation(IAspectSource.class);
@@ -717,7 +728,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
         return aspectContainer != null ? aspectContainer.containerContains(tag) : 0;
     }
 
-    /* IESSENTIATRANSPORT */
+    *//* IESSENTIATRANSPORT *//*
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public boolean isConnectable(ForgeDirection face) {
@@ -798,7 +809,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     public boolean renderExtendedTube() {
         IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
         return essentiaTransport != null && essentiaTransport.renderExtendedTube();
-    }
+    }*/
 
     /* IENERGYSOURCE */
     @Override
@@ -817,9 +828,16 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
-    public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
+    public boolean emitsEnergyTo(IEnergyAcceptor acceptor, EnumFacing facing) {
         IEnergySource energySource = (IEnergySource) getTransferImplementation(IEnergySource.class);
-        return energySource != null && energySource.emitsEnergyTo(receiver, getAdjustedSide(direction));
+        return energySource != null && energySource.emitsEnergyTo(acceptor, getAdjustedSide(facing));
+    }
+
+    @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.IC2)
+    public int getSourceTier() {
+        IEnergySource energySource = (IEnergySource) getTransferImplementation(IEnergySource.class);
+        return energySource != null ? energySource.getSourceTier() : 0;
     }
 
     /* IENERGYSINK */
@@ -839,25 +857,17 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
-    public double injectEnergy(ForgeDirection directionFrom, double amount, double voltage) {
+    public double injectEnergy(EnumFacing facing, double amount, double voltage) {
         IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
-        return energySink != null ? energySink.injectEnergy(getAdjustedSide(directionFrom), amount, voltage) : 0;
+        return energySink != null ? energySink.injectEnergy(getAdjustedSide(facing), amount, voltage) : 0;
     }
 
     /* IENERGYACCEPTOR */
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
-    public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
+    public boolean acceptsEnergyFrom(IEnergyEmitter emitter, EnumFacing facing) {
         IEnergyAcceptor energyAcceptor = (IEnergyAcceptor) getTransferImplementation(IEnergyAcceptor.class);
-        return energyAcceptor != null && energyAcceptor.acceptsEnergyFrom(emitter, getAdjustedSide(direction));
-    }
-
-    /* IENERGYSOURCE */
-    @Override
-    @Optional.Method(modid = DependencyInfo.ModIds.IC2)
-    public int getSourceTier() {
-        IEnergySource energySource = (IEnergySource) getTransferImplementation(IEnergySource.class);
-        return energySource != null ? energySource.getSourceTier() : 0;
+        return energyAcceptor != null && energyAcceptor.acceptsEnergyFrom(emitter, getAdjustedSide(facing));
     }
 
     /* IENERGYSTORAGE */
@@ -905,49 +915,64 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
-    public boolean isTeleporterCompatible(ForgeDirection side) {
+    public boolean isTeleporterCompatible(EnumFacing facing) {
         IEnergyStorage energyStorage = (IEnergyStorage) getTransferImplementation(IEnergyStorage.class);
-        return energyStorage != null && energyStorage.isTeleporterCompatible(getAdjustedSide(side));
+        return energyStorage != null && energyStorage.isTeleporterCompatible(getAdjustedSide(facing));
     }
 
     /* IENERGYHANDLER - COFH*/
-    @Override
-    @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
-    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
-        IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
-        return energyHandler != null ? energyHandler.receiveEnergy(getAdjustedSide(from), maxReceive, simulate) : 0;
-    }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
-    public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
-        IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
-        return energyHandler != null ? energyHandler.extractEnergy(getAdjustedSide(from), maxExtract, simulate) : 0;
-    }
-
-    @Override
-    @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
-    public int getEnergyStored(ForgeDirection from) {
+    public int getEnergyStored(EnumFacing from) {
         IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
         return energyHandler != null ? energyHandler.getEnergyStored(getAdjustedSide(from)) : 0;
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
-    public int getMaxEnergyStored(ForgeDirection from) {
+    public int getMaxEnergyStored(EnumFacing from) {
         IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
         return energyHandler != null ? energyHandler.getMaxEnergyStored(getAdjustedSide(from)) : 0;
     }
 
+    /* IENERGYSTORAGE - COFH*/
+
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
-    public boolean canConnectEnergy(ForgeDirection from) {
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        cofh.api.energy.IEnergyStorage energyHandler = (cofh.api.energy.IEnergyStorage) getTransferImplementation(IEnergyHandler.class);
+        return energyHandler != null ? energyHandler.receiveEnergy(maxReceive, simulate) : 0;
+    }
+
+    @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
+    public int extractEnergy(int maxExtract, boolean simulate) {
+        cofh.api.energy.IEnergyStorage energyHandler = (cofh.api.energy.IEnergyStorage) getTransferImplementation(IEnergyHandler.class);
+        return energyHandler != null ? energyHandler.extractEnergy(maxExtract, simulate) : 0;
+    }
+
+    @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
+    public boolean canConnectEnergy(EnumFacing from) {
         IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
         return energyHandler != null && energyHandler.canConnectEnergy(getAdjustedSide(from));
     }
 
-    /* IWANDABLE */
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
+    public int getEnergyStored() {
+
+    }
+
+    @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
+    public int getMaxEnergyStored() {
+
+    }
+
+    /* IWANDABLE */
+/*    @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public int onWandRightClick(World world, ItemStack wandstack, EntityPlayer player, int x, int y, int z, int side, int md) {
         IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.REMOTE_ACCESS);
@@ -973,50 +998,37 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     public void onWandStoppedUsing(ItemStack wandstack, World world, EntityPlayer player, int count) {
         IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.REMOTE_ACCESS);
         if (wandable != null) wandable.onWandStoppedUsing(wandstack, world, player, count);
-    }
+    }*/
 
     /* IWRENCHABLE */
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
-    public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
+    public EnumFacing getFacing(World world, BlockPos pos) {
         IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
-        return wrenchable != null && wrenchable.wrenchCanSetFacing(entityPlayer, getAdjustedSide(side));
+        return wrenchable != null ? wrenchable.getFacing(world, pos) : EnumFacing.DOWN;
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
-    public short getFacing() {
-        IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
-        return wrenchable != null ? wrenchable.getFacing() : 0;
-    }
-
-    @Override
-    @Optional.Method(modid = DependencyInfo.ModIds.IC2)
-    public void setFacing(short facing) {
+    public boolean setFacing(World world, BlockPos pos, EnumFacing facing, EntityPlayer player) {
         IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
         if (wrenchable != null) wrenchable.setFacing((short) getAdjustedSide(facing));
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
-    public boolean wrenchCanRemove(EntityPlayer entityPlayer) {
+    public boolean wrenchCanRemove(World world, BlockPos pos, EntityPlayer entityPlayer) {
         return false;
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
-    public float getWrenchDropRate() {
-        return 0F;
-    }
-
-    @Override
-    @Optional.Method(modid = DependencyInfo.ModIds.IC2)
-    public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
+    public List<ItemStack> getWrenchDrops(World world, BlockPos pos, IBlockState state, TileEntity tileEntity, EntityPlayer player, int i) {
         return null;
     }
 
     /* IGRIDHOST */
-    @Override
+/*    @Override
     @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public IGridNode getGridNode(ForgeDirection dir) {
         IGridHost gridNode = (IGridHost) getTransferImplementation(IGridHost.class);
@@ -1035,7 +1047,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
         worldObj.setBlockToAir(xCoord, yCoord, zCoord);
     }
 
-    /* IGRIDBLOCK */
+    *//* IGRIDBLOCK *//*
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public double getIdlePowerUsage() {
@@ -1108,7 +1120,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     public ItemStack getMachineRepresentation() {
         IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
         return gridBlock != null ? getMachineRepresentation() : new ItemStack(this.blockType);
-    }
+    }*/
 
     /* END IMPLEMENTATIONS */
 }

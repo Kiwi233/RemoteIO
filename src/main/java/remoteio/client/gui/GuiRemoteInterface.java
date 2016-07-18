@@ -1,10 +1,5 @@
 package remoteio.client.gui;
 
-import remoteio.client.gui.button.GuiButtonCustom;
-import remoteio.common.core.helper.MatrixHelper;
-import remoteio.common.inventory.container.ContainerRemoteInterface;
-import remoteio.common.lib.ModInfo;
-import remoteio.common.tile.TileRemoteInterface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -15,6 +10,11 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
+import remoteio.client.gui.button.GuiButtonCustom;
+import remoteio.common.core.helper.MatrixHelper;
+import remoteio.common.inventory.container.ContainerRemoteInterface;
+import remoteio.common.lib.ModInfo;
+import remoteio.common.tile.TileRemoteInterface;
 
 /**
  * @author dmillerw

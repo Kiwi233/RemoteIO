@@ -1,20 +1,20 @@
 package remoteio.common;
 
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.ModMetadata;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import remoteio.common.block.BlockRemoteInterface;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import remoteio.common.core.ChannelRegistry;
 import remoteio.common.core.handler.*;
 import remoteio.common.core.helper.EventHelper;
-import remoteio.common.tracker.BlockTracker;
 import remoteio.common.lib.ModBlocks;
 import remoteio.common.lib.ModInfo;
 import remoteio.common.lib.ModItems;
@@ -23,14 +23,12 @@ import remoteio.common.recipe.ModRecipes;
 import remoteio.common.recipe.RecipeCopyLocation;
 import remoteio.common.recipe.RecipeInhibitorApply;
 import remoteio.common.recipe.RecipeRemoteInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.config.Configuration;
+import remoteio.common.tracker.BlockTracker;
 
 @Mod(modid = ModInfo.ID, name = ModInfo.NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCIES)
 public class RemoteIO {
 
-    @Instance(ModInfo.ID)
+    @Mod.Instance(ModInfo.ID)
     public static RemoteIO instance;
 
     @SidedProxy(serverSide = ModInfo.SERVER, clientSide = ModInfo.CLIENT)
@@ -42,7 +40,7 @@ public class RemoteIO {
 
     public static Configuration configuration;
 
-    @EventHandler
+    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         configuration = new Configuration(event.getSuggestedConfigurationFile());
         configuration.load();
@@ -54,8 +52,6 @@ public class RemoteIO {
 
         ModBlocks.initialize();
         ModItems.initialize();
-
-        BlockRemoteInterface.renderID = RenderingRegistry.getNextAvailableRenderId();
 
         // Used for clearing location chips
         GameRegistry.addShapelessRecipe(new ItemStack(ModItems.locationChip), new ItemStack(ModItems.locationChip));
@@ -89,12 +85,12 @@ public class RemoteIO {
         }
     }
 
-    @EventHandler
+    @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
     }
 
-    @EventHandler
+    @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         // We do recipe setup in post-init as some recipes rely on other mods
         ModRecipes.initialize();
@@ -102,7 +98,7 @@ public class RemoteIO {
         proxy.postInit(event);
     }
 
-    @EventHandler
+    @Mod.EventHandler
     public void checkMappings(FMLMissingMappingsEvent event) {
         for (FMLMissingMappingsEvent.MissingMapping map : event.getAll()) {
             if (map.name.startsWith("remoteio:")) {
@@ -111,9 +107,9 @@ public class RemoteIO {
                     map.remap(GameRegistry.findBlock(ModInfo.ID, name));
                 } else if (map.type == GameRegistry.Type.ITEM) {
                     if (name.equalsIgnoreCase("remote_interface") || name.equalsIgnoreCase("remote_inventory")) {
-                        map.remap(Item.getItemFromBlock(GameRegistry.findBlock(ModInfo.ID, name)));
+                        map.remap(Item.getItemFromBlock(Block.REGISTRY.getObject(new ResourceLocation(ModInfo.ID, name))));
                     } else {
-                        map.remap(GameRegistry.findItem(ModInfo.ID, name));
+                        map.remap(Item.REGISTRY.getObject(new ResourceLocation(ModInfo.ID, name)));
                     }
                 }
             }

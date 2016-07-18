@@ -1,16 +1,16 @@
 package remoteio.client.render;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import remoteio.common.block.BlockRemoteInterface;
-import remoteio.common.block.core.BlockIOCore;
-import remoteio.common.lib.VisualState;
-import remoteio.common.tile.TileRemoteInterface;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.ForgeHooksClient;
+import remoteio.common.block.BlockRemoteInterface;
+import remoteio.common.block.core.BlockIOCore;
+import remoteio.common.lib.VisualState;
+import remoteio.common.tile.TileRemoteInterface;
 
 /**
  * @author dmillerw

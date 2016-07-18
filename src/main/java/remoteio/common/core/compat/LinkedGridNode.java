@@ -1,3 +1,4 @@
+/*
 package remoteio.common.core.compat;
 
 import appeng.api.AEApi;
@@ -5,19 +6,21 @@ import appeng.api.networking.*;
 import appeng.api.util.IReadOnlyCollection;
 import appeng.util.ReadOnlyCollection;
 import com.google.common.collect.Lists;
-import remoteio.common.core.TransferType;
-import remoteio.common.tile.TileRemoteInterface;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import remoteio.common.core.TransferType;
+import remoteio.common.tile.TileRemoteInterface;
 
 import java.lang.ref.WeakReference;
 import java.util.EnumSet;
 import java.util.List;
 
+*/
 /**
  * @author dmillerw
- */
+ *//*
+
 public class LinkedGridNode implements IGridNode {
 
     private final WeakReference<IGridNode> parentNode;
@@ -158,3 +161,4 @@ public class LinkedGridNode implements IGridNode {
         return gridNode != null ? gridNode.getPlayerID() : 0;
     }
 }
+*/

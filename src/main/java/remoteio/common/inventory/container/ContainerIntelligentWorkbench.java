@@ -1,10 +1,6 @@
 package remoteio.common.inventory.container;
 
 import com.google.common.collect.Lists;
-import remoteio.common.inventory.InventoryTileCrafting;
-import remoteio.common.network.PacketHandler;
-import remoteio.common.network.packet.PacketClientForceSlot;
-import remoteio.common.tile.TileIntelligentWorkbench;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -14,6 +10,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+import remoteio.common.inventory.InventoryTileCrafting;
+import remoteio.common.network.PacketHandler;
+import remoteio.common.network.packet.PacketClientForceSlot;
+import remoteio.common.tile.TileIntelligentWorkbench;
 
 import java.util.List;
 

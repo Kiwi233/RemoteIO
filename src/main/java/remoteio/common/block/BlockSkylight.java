@@ -1,14 +1,14 @@
 package remoteio.common.block;
 
-import remoteio.common.core.TabRemoteIO;
-import remoteio.common.core.handler.BlockUpdateTicker;
-import remoteio.common.lib.ModInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import remoteio.common.core.TabRemoteIO;
+import remoteio.common.core.handler.BlockUpdateTicker;
+import remoteio.common.lib.ModInfo;
 
 public class BlockSkylight
 extends Block {

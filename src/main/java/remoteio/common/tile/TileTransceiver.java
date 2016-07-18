@@ -1,10 +1,10 @@
 package remoteio.common.tile;
 
-import remoteio.common.RemoteIO;
-import remoteio.common.tile.core.TileCore;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import remoteio.common.RemoteIO;
+import remoteio.common.tile.core.TileCore;
 
 /**
  * @author dmillerw
