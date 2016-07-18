@@ -34,6 +34,7 @@ minecraft {
     runDir = "run"
     version = "${minecraft_version}-${forge_version}"
     mappings = "${mappings_version}"
+	
     replaceIn mod_info_path
     replace "@MAJOR@", major_version
     replace "@MINOR@", minor_version
@@ -42,7 +43,7 @@ minecraft {
 }
 dependencies {
     deobfCompile "mcp.mobius.waila:Waila:${WAILA_version}_1.9.4:dev"
-//  compile "net.industrial-craft:industrialcraft-2:${IC2_version}:dev"
+//  deobfCompile "net.industrial-craft:industrialcraft-2:${IC2_version}:dev"
     deobfCompile "mezz.jei:jei_${minecraft_version}:${JEI_version}"
 }
 
