@@ -1,7 +1,9 @@
 package remoteio.common.network;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.WorldServer;
 
 /**
@@ -34,5 +36,13 @@ public class ServerProxyPlayer extends EntityPlayerMP {
     @Override
     public double getDistanceSqToEntity(Entity p_70068_1_) {
         return 6;
+    }
+    
+    @Override
+    public void addChatComponentMessage(IChatComponent p_146105_1_) {
+    }
+    
+    @Override
+    public void addChatMessage(IChatComponent p_145747_1_) {
     }
 }
